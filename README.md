@@ -143,27 +143,31 @@ The paper books trade anyway, because practice builds the operational record: fi
 
 ## How it works
 
+**From an idea to permission.** A rule earns the right to trade through the research lab; until then it may only practise on paper.
+
 ```mermaid
 flowchart LR
-    subgraph research["Research lab"]
-        data["Checksummed market history"] --> rules["Rules and filters"]
-        rules --> study["Walk-forward study, full costs"]
-        study --> registry[("Hash-chained trial registry")]
-    end
-
-    subgraph runtime["Trading runtime: replay, paper, demo"]
-        bars["Market bars"] --> cand["Trade candidate"]
-        cand --> risk{"Risk engine, one policy file"}
-        risk -- "refused" --> reason["Reject reason recorded"]
-        risk -- "approved" --> gateway["Submission gateway"]
-        gateway --> broker["Paper or demo broker"]
-        broker --> ledger[("Ledger in PostgreSQL")]
-    end
-
-    registry -. "release gates G0 to G5" .-> risk
-    ledger --> console["Trader Console, read-only"]
-    assistant["AI assistant, research tools only"] -. "order tools denied" .-> data
+    idea["Rule idea"] --> trial["Registered trial"]
+    trial --> study["Walk-forward study"]
+    study --> log[("Hash-chained log")]
+    log --> gates{"Gates G0 to G5"}
+    gates -- "not passed" --> practice["Paper practice only"]
+    gates -- "passed" --> pilot["Owner may enable live"]
 ```
+
+**From a signal to the ledger.** In replay, paper and demo mode alike, every order takes the same path, and the risk engine is the only way through.
+
+```mermaid
+flowchart LR
+    cand["Trade candidate"] --> risk{"Risk engine"}
+    risk -- "refused" --> reason["Reason recorded"]
+    risk -- "approved" --> gateway["Submission gateway"]
+    gateway --> broker["Paper or demo broker"]
+    broker --> ledger[("Ledger")]
+    ledger --> console["Console, read-only"]
+```
+
+The AI assistant sits outside both paths: it reads market data for research and has no order tools.
 
 | Path | What lives there |
 | --- | --- |
