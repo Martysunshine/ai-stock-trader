@@ -1,0 +1,19 @@
+# Day trade with the break of the last 24 hourly bars, crypto sleeve (ADR-0055, trial T-0023).
+# Fixed in the decision record before any result existed; nothing here was tuned. The rule of
+# cfd_hourly_breakout_v1 on the hours of a market that never closes: decisions on hourly bars
+# ending from 00:00 to 17:00 UTC, closed at 21:00 UTC at the latest (before the 22:00 UTC
+# financing charge, which a long pays every night).
+strategy_id: cfd_crypto_hourly_breakout
+version: 1
+family: CFD_HOURLY_CHANNEL
+feature_version: hourly-v1
+mode: breakout
+max_hold_hours: 21
+channel_hours: 24
+atr_hours: 24
+stop_atr_multiplier: "2"
+reward_risk: "2"
+entry_first_hour_utc: 0
+entry_last_hour_utc: 17
+flat_hour_utc: 21
+research_status: UNVALIDATED - declared rule; evaluated only through registered trials

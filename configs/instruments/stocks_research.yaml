@@ -1,0 +1,64 @@
+# strategy_and_profitability.md section 3 research universe (examples, not recommendations).
+# Broker metadata (asset IDs, fractionability, minimums) has NOT been fetched: evidence UNKNOWN
+# and tradable=false until the paper adapter (M4) records real metadata. Five technology names
+# are concentrated in one sector; this is disclosed, not diversified.
+- kind: equity
+  identity: {instrument_id: "XNAS:AAPL", broker: alpaca, broker_asset_id: unresolved-aapl, symbol: AAPL, venue_mic: XNAS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: false
+  fractionable: true
+  evidence: UNKNOWN
+  as_of: "2026-11-07T00:00:00Z"
+  source: placeholder until broker asset metadata is fetched
+- kind: equity
+  identity: {instrument_id: "XNAS:MSFT", broker: alpaca, broker_asset_id: unresolved-msft, symbol: MSFT, venue_mic: XNAS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: false
+  fractionable: true
+  evidence: UNKNOWN
+  as_of: "2026-11-07T00:00:00Z"
+  source: placeholder until broker asset metadata is fetched
+- kind: equity
+  identity: {instrument_id: "XNAS:GOOGL", broker: alpaca, broker_asset_id: unresolved-googl, symbol: GOOGL, venue_mic: XNAS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: false
+  fractionable: true
+  evidence: UNKNOWN
+  as_of: "2026-11-07T00:00:00Z"
+  source: placeholder until broker asset metadata is fetched
+- kind: equity
+  identity: {instrument_id: "XNAS:AMZN", broker: alpaca, broker_asset_id: unresolved-amzn, symbol: AMZN, venue_mic: XNAS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: false
+  fractionable: true
+  evidence: UNKNOWN
+  as_of: "2026-11-07T00:00:00Z"
+  source: placeholder until broker asset metadata is fetched
+- kind: equity
+  identity: {instrument_id: "XNAS:NVDA", broker: alpaca, broker_asset_id: unresolved-nvda, symbol: NVDA, venue_mic: XNAS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: false
+  fractionable: true
+  evidence: UNKNOWN
+  as_of: "2026-11-07T00:00:00Z"
+  source: placeholder until broker asset metadata is fetched

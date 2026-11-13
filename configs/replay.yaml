@@ -1,0 +1,18 @@
+# Default configuration: deterministic replay against the in-process replay broker.
+config_version: 1
+mode: replay
+live_enabled: false
+policy_file: policy/base.yaml
+tracks_dir: tracks
+portfolio_id: pf-main
+accounts:
+  - alias: replay-stocks
+    account_id: acct-replay-stocks
+    track: STOCKS
+    broker: replay
+    capability_profile: capabilities/replay.yaml
+    fee_schedule: fees/replay_demo.yaml
+    instruments: instruments/synthetic_equities.yaml
+database:
+  backend: sqlite
+  path: ../runs/replay.db

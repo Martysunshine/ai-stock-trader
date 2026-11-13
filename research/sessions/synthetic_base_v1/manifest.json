@@ -1,0 +1,30 @@
+{
+  "name": "synthetic_base_v1",
+  "description": "SYNTHETIC replay fixture (not market data) for the first demonstrator; base path",
+  "synthetic": true,
+  "feed": "SYNTHETIC",
+  "session_date": "2026-11-27",
+  "instruments": [
+    "XNYS:SYNA",
+    "XNYS:SYNB"
+  ],
+  "events_file": "events.jsonl",
+  "events_sha256": "6b8e6c5e7381e558c017e685740aab740312cd53cf99e107ec70fface70bdce2",
+  "event_count": 1680,
+  "generator": {
+    "module": "trader.data.synthetic",
+    "version": "synthetic-v1",
+    "variant": "base"
+  },
+  "edge_assumptions": {
+    "expected_gross_return": "0.006",
+    "uncertainty_margin": "0.0015",
+    "basis": "MID_TO_MID",
+    "label": "DECLARED FIXTURE ASSUMPTION for exercising the cost-aware path; it is not an estimated or validated edge and is not evidence of profitability"
+  },
+  "known_limitations": [
+    "synthetic prices: no information about any real instrument",
+    "bar-only/30-second granularity cannot certify execution realism",
+    "single session; no corporate actions, no split events (M2 dataset)"
+  ]
+}

@@ -1,0 +1,12 @@
+# COMMODITIES_AND_CFD_TRACK.md: gold first, then silver. ETC (fully paid, long only) or CFD
+# (demo research may test both directions). No live direction is certified.
+track: COMMODITIES
+enabled: false
+description: Gold then silver via an eligible ETC or an approved cash CFD; replay/demo only.
+allowed_product_types: [ETC, CFD]
+replay_directions: [LONG, SHORT]
+live_directions: []
+calendar: BROKER_CFD
+decision_bar_minutes: 15
+context_bar_minutes: 60
+loss_windows: [UTC_DAY, UTC_WEEK]

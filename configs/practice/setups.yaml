@@ -1,0 +1,114 @@
+# The setup the assistant trades in its practice sleeves (ADR-0049, ADR-0052), read by
+# `trader journal scan` and the practice watch (trader.practice.setups). A setup is listed here
+# only when its registered trial on the broker's own quotes was net positive in the base and the
+# stressed views and in walk forward (ADR-0052).
+#
+# weekly_momentum_v1: the rule of trial T-0019 (src/trader/strategies/specs/
+# cfd_crypto_weekly_momentum_v1.yaml), unchanged. 2018-03 to 2026-07 on the Capital.com Bitcoin
+# and Ether CFDs, sized as this sleeve: base +19.51 USD over 372 trades on USD 100 windows,
+# stressed +1.23, walk forward +0.42 over 225 trades; G2 not passed. A thin result: practice
+# measures whether it holds forward. Buy and hold made far more over the same years.
+#
+# This first block is what `trader journal scan` and the practice watch read (one setup, with its
+# parameters inline). Everything the practice trader runs, this setup included, is the
+# `trader_setups` list below (ADR-0056, ADR-0060, ADR-0063): the index dip (T-0018, which made
+# +4.40 USD in the base view and -0.02 under stressed costs) runs there as a forward test.
+weekly_momentum_v1:
+  sleeve: crypto-cfd
+  title: Weekly momentum on the Bitcoin and Ether CFDs
+  epics: {BTCUSD: cfd/BTCUSD, ETHUSD: cfd/ETHUSD}
+  lookback_days: 7
+  decision_weekday: 6
+  atr_period: 10
+  stop_atr_multiplier: "3"
+  reward_risk: "2"
+  max_hold_hours: 168
+
+# The practice trader's setups (ADR-0056), run by `python -m trader.practice trade`. Each runs the
+# rule of a registered trial, unchanged, with that trial's study file: the same rule
+# specification, instrument specifications, sizing policy and fee schedule. `status` is `tested`
+# when the trial passed ADR-0052's practice rule and `forward_test` when the owner lets it run on
+# the demo account although it failed one check; a forward test stops taking entries once its own
+# closed result is below `loss_cap_usd`, and is reviewed after `review_after_trades` trades.
+trader_setups:
+  - key: weekly_momentum_v1
+    title: Weekly momentum, Bitcoin and Ether
+    sleeve: crypto-cfd
+    status: tested
+    trial: T-0019
+    study: configs/research/cfd_crypto_momentum_v1.yaml
+    enabled: true
+  - key: crypto_hourly_breakout_v1
+    title: Hourly break of the 24-hour range, Bitcoin and Ether
+    sleeve: crypto-cfd
+    status: forward_test
+    trial: T-0023
+    study: configs/research/cfd_crypto_hourly_channel_v1.yaml
+    loss_cap_usd: "5"
+    review_after_trades: 60
+    enabled: true
+  - key: index_dip_v1
+    title: Index dip, US 500, US Tech 100, US 30 and Russell 2000
+    sleeve: capital-demo
+    status: forward_test
+    trial: T-0018
+    study: configs/research/cfd_index_dip_v1.yaml
+    loss_cap_usd: "5"
+    review_after_trades: 60
+    enabled: true
+  # PRACTICE setups (ADR-0060, owner 2026-11-11: "trading just like the stocks, actively"). Rules
+  # without a passing trial, run on the demo account as the stocks bot runs --practice: they keep
+  # the sleeves trading and record what happens; expect small losses to the spread, not income.
+  # Each names its rule, instrument, policy and fee files itself; each stops below its loss cap.
+  # The break of the 24-hour range is run as three setups by market family (ADR-0063): the policy
+  # holds each setup's notional to the sleeve's equity, so one setup holds about one position; three
+  # setups give the sleeve up to three at once (four trades in all), and each family has its own
+  # ledger and loss cap. The first key is kept because its trade was open when the split was made.
+  - key: practice_commodity_breakout_v1
+    title: Practice - hourly break of the 24-hour range, metals
+    sleeve: capital-demo
+    status: practice
+    spec: src/trader/strategies/specs/practice_cfd_hourly_breakout_v1.yaml
+    instruments: configs/instruments/capital_demo_cfds_v2.yaml
+    policy: configs/policy/cfd_sleeve_v1.yaml
+    fees: configs/fees/capital_com_cfd_demo_v1.yaml
+    calendar: BROKER_CFD
+    epics: [GOLD, SILVER, COPPER]
+    loss_cap_usd: "5"
+    enabled: true
+  - key: practice_energy_breakout_v1
+    title: Practice - hourly break of the 24-hour range, oil and gas
+    sleeve: capital-demo
+    status: practice
+    spec: src/trader/strategies/specs/practice_cfd_hourly_breakout_v1.yaml
+    instruments: configs/instruments/capital_demo_cfds_v2.yaml
+    policy: configs/policy/cfd_sleeve_v1.yaml
+    fees: configs/fees/capital_com_cfd_demo_v1.yaml
+    calendar: BROKER_CFD
+    epics: [OIL_CRUDE, OIL_BRENT, HEATINGOIL, NATURALGAS]
+    loss_cap_usd: "5"
+    enabled: true
+  - key: practice_macro_breakout_v1
+    title: Practice - hourly break of the 24-hour range, EUR/USD and US indices
+    sleeve: capital-demo
+    status: practice
+    spec: src/trader/strategies/specs/practice_cfd_hourly_breakout_v1.yaml
+    instruments: configs/instruments/capital_demo_cfds_v2.yaml
+    policy: configs/policy/cfd_sleeve_v1.yaml
+    fees: configs/fees/capital_com_cfd_demo_v1.yaml
+    calendar: BROKER_CFD
+    epics: [EURUSD, US500, US100, US30]
+    loss_cap_usd: "5"
+    enabled: true
+  - key: practice_crypto_breakout_v1
+    title: Practice - hourly break of the 24-hour range, Bitcoin and Ether, longer hours
+    sleeve: crypto-cfd
+    status: practice
+    spec: src/trader/strategies/specs/practice_crypto_hourly_breakout_v1.yaml
+    instruments: configs/instruments/capital_demo_cfds_v2.yaml
+    policy: configs/policy/crypto_cfd_sleeve_v1.yaml
+    fees: configs/fees/capital_com_cfd_demo_v1.yaml
+    calendar: UTC_24_7
+    epics: [BTCUSD, ETHUSD]
+    loss_cap_usd: "5"
+    enabled: true

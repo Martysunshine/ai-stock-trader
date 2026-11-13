@@ -1,0 +1,17 @@
+# markets_and_brokers.md §3: IBKR US fractional footnote - greater of 1% of trade value or
+# USD 0.01 per fractional trade (USD 5 purchase -> USD 0.05). Regulatory/exchange fees are
+# excluded here; they could only raise costs. Verify for the actual entity/account.
+schedule_id: ibkr-us-fractional-2026-10-13
+description: IBKR fractional US stock commission (documented footnote)
+evidence: DOCUMENTED
+known: true
+source: https://www.interactivebrokers.com/en/pricing/commissions-stocks.php
+as_of: "2026-10-13"
+currency: USD
+default_liquidity: TAKER
+components:
+  - type: percent_with_minimum
+    sides: [BUY, SELL]
+    rate: "0.01"
+    minimum: "0.01"
+    granularity: "0.01"

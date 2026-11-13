@@ -1,0 +1,11 @@
+# Original v1 track (instructions.md, strategy_and_profitability.md). Long-only ordinary equities.
+track: STOCKS
+enabled: true
+description: Fractional US-listed ordinary stocks, long only, regular hours.
+allowed_product_types: [ORDINARY_EQUITY]
+replay_directions: [LONG]
+live_directions: [LONG]
+calendar: XNYS
+decision_bar_minutes: 5
+context_bar_minutes: 15
+loss_windows: [NY_SESSION, NY_WEEK, UTC_DAY, UTC_WEEK]

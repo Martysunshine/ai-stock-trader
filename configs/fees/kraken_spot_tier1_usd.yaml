@@ -1,0 +1,18 @@
+# Same public Kraken Pro Tier 1 spot table as kraken_spot_tier1.yaml (CRYPTO_TRADING_TRACK.md
+# section 6: 0.40% maker / 0.80% taker before discounts, research check 2026-11-06), expressed for
+# USD-quoted pairs (BTC/USD, ETH/USD). Fees round up to 0.0001 USD. Must be fetched per account
+# (TradeVolume endpoint) before any trade; research uses it as the documented cost basis.
+schedule_id: kraken-pro-spot-tier1-usd-2026-11-06
+description: Kraken Pro spot Tier 1 maker/taker for USD pairs (public table snapshot)
+evidence: DOCUMENTED
+known: true
+source: https://www.kraken.com/pro/fees
+as_of: "2026-11-06"
+currency: USD
+default_liquidity: TAKER
+components:
+  - type: maker_taker
+    sides: [BUY, SELL]
+    maker_rate: "0.0040"
+    taker_rate: "0.0080"
+    granularity: "0.0001"

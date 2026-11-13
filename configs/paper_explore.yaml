@@ -1,0 +1,24 @@
+# The aggressive paper exploration book (ADR-0057): Candidate A in practice mode on 20 stocks
+# with USD 300, five positions and 30 entries a session. Own portfolio, account id and database
+# (trader_explore), so its results never mix with the USD 100 stocks practice sleeve of
+# configs/paper.yaml. Both run on the one Alpaca paper account, so never at the same time: the
+# account's lock lives in each database and cannot see the other.
+config_version: 1
+mode: paper
+live_enabled: false
+policy_file: policy/paper_explore_v2.yaml   # USD 300, 5 positions, 30 entries, wide loss limits (ADR-0064)
+tracks_dir: tracks
+portfolio_id: pf-explore
+accounts:
+  - alias: explore
+    account_id: acct-alpaca-paper-explore
+    track: STOCKS
+    broker: alpaca_paper
+    capability_profile: capabilities/alpaca_paper_certified.yaml
+    fee_schedule: fees/alpaca_us_equities_v2.yaml
+    accrue_modelled_fees: true
+    instruments: instruments/stocks_explore.yaml   # 20 large US stocks (Alpaca asset metadata)
+    secret_ref: ai-stock-trader/alpaca-paper
+database:
+  backend: postgresql
+  url_env: TRADER_EXPLORE_DATABASE_URL

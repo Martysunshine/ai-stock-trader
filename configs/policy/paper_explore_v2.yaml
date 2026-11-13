@@ -1,0 +1,68 @@
+# PAPER EXPLORATION ONLY (ADR-0057, numbers of ADR-0064) - the aggressive stock book. The runtime
+# config refuses this file outside paper mode, like every paper_ policy.
+#
+# Changes against paper_explore_v1.yaml, all of them numbers; every safety capability stays:
+# - a quote may be 15 seconds old (2 before): the free IEX quote often stands still for longer
+#   than 2 seconds, which refused three signals on 2026-11-11 as STALE_DATA;
+# - 30 entries a session (20 before): 20 was the top of what the owner asked for, not room for it;
+# - the loss limits are fault catchers, not a trading plan: 10% a day (USD 30), 25% a week, 50%
+#   from the high, a floor at USD 150. A normal day of this rule loses USD 1 to 3, so only a
+#   malfunction or a very bad run reaches them. A breach still pauses entries, sells the positions
+#   and waits for a recorded review (ADR-0064 says who reviews).
+# Unchanged: USD 300, 2% at the stop, USD 75 a stock, five positions, 20 bps of market spread
+# (ADR-0061), one entry order waiting at a time (ADR-0010), no borrowing and no shorting.
+policy_version: 1
+mode: replay
+base_currency: USD
+initial_trading_capital: "300.00"
+live_enabled: false
+
+instruments:
+  ordinary_equities_only: true
+  long_only: true
+  fractional_only_if_certified: true
+  leverage_enabled: false
+  shorting_enabled: false
+  extended_hours_enabled: false
+  minimum_notional_from_broker: true
+
+exposure:
+  risk_per_trade_fraction: "0.02"
+  max_total_planned_risk_fraction: "0.10"
+  max_gross_exposure_fraction: "1.00"
+  max_symbol_exposure_fraction: "0.25"
+  minimum_cash_reserve_fraction: "0"
+  minimum_cash_reserve_absolute: "0"
+  max_open_positions: 5
+  live_pilot_max_open_positions: 1
+  max_pending_entry_orders: 1
+  max_new_entries_per_session: 30
+
+loss_limits:
+  daily_loss_fraction: "0.10"
+  weekly_loss_fraction: "0.25"
+  max_high_water_drawdown_fraction: "0.50"
+  initial_capital_pause_floor: "150.00"
+  automatic_resume_after_loss_breach: false
+
+quality:
+  max_quote_age_seconds: 15
+  max_account_snapshot_age_seconds: 5
+  max_clock_skew_milliseconds: 250
+  max_entry_spread_bps: 20
+  gap_allowance_floor_bps: 10
+  require_feed_parity: true
+  require_positive_conservative_net_edge: true
+
+execution:
+  native_protection_required_for_live: true
+  allow_blind_submission_retries: false
+  unknown_order_blocks_new_entries: true
+  preserve_risk_reducing_exits_when_paused: true
+  funds_check_uses_actual_account_rule_profile: true
+
+expenses:
+  paid_data_enabled: false
+  live_loop_llm_api_budget_usd_per_day: "0.00"
+  automatic_funding_enabled: false
+  automatic_withdrawals_enabled: false

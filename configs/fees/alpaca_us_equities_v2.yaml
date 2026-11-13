@@ -1,0 +1,168 @@
+# Alpaca US equities, verified from official pages on 2026-11-08 (supersedes the cost basis in
+# alpaca_us_equities.yaml, which is kept unchanged as the historical "unknown" record).
+#
+# What is charged (Alpaca Brokerage Fee Schedule, revised 2026-10-12):
+#   * no commission for ordinary US equity trades (commissions apply only to index options, the
+#     Elite Smart Router and order flow deemed non-retail);
+#   * SEC Section 31 transaction fee on SELLS: rate x trade value;
+#   * FINRA Trading Activity Fee (TAF) on SELLS: per share, with a per-trade maximum;
+#   * FINRA Consolidated Audit Trail (CAT) fee on BUYS AND SELLS: per executed equivalent share;
+#   * fees are computed on the exact executed quantity including fractional shares; each fee type
+#     is aggregated per account per day and the daily total is rounded UP to USD 0.01.
+#
+# CONSERVATIVE CHOICES (one schedule must cover the whole backtest, 2022-01 .. 2026-11):
+#   * SEC rate = the HIGHEST rate in force over 2022-01-01 .. 2026-11-08:
+#       5.10 USD per million  until 2022-05-13
+#      22.90                  2022-05-14 .. 2023-02-26
+#       8.00                  2023-02-27 .. 2024-05-21
+#      27.80  <- maximum      2024-05-22 .. 2025-05-13
+#       0.00                  2025-05-14 .. 2026-04-03
+#      20.60                  2026-04-04 .. (60 days after the FY2027 appropriation; no FY2027
+#                             Section 31 advisory was listed on 2026-11-08)
+#   * TAF = the HIGHEST covered-equity rate and cap in force over the same span:
+#      0.000130/share, max 6.49  2022;  0.000145, max 7.27  2023;  0.000166, max 8.30  2024-2025;
+#      0.000195, max 9.79  2026-01-01 .. 2026-09-30  <- maximum;  0.00  2026-10-01 .. 2026-12-31
+#      (temporary pause, SR-FINRA-2026-021).
+#   * CAT = the HIGHEST combined industry-member CAT rate: CAT Fee 2024-1 (0.000035) plus
+#     Historical CAT Assessment 1 (0.000013) = 0.000048 per executed equivalent share (in force
+#     together for the August 2024 .. January 2025 invoices). Alpaca's schedule shows 0.000003
+#     today; no dated official Alpaca page shows what it passed through in 2024-2025, so the
+#     full industry-member rate is ASSUMED to have been passed through.
+#   * Rounding is modelled PER ORDER: each fee type is rounded up to USD 0.01 on every order.
+#     Alpaca's current schedule aggregates per day first; because ceil(a + b) <= ceil(a) +
+#     ceil(b), per-order rounding is an upper bound of the daily method, and it equals the
+#     per-trade rounding described by Alpaca's support article ("rounded up to the nearest
+#     penny"). A tiny fractional sell therefore costs USD 0.03 (SEC 0.01 + TAF 0.01 + CAT 0.01)
+#     and a tiny buy USD 0.01 (CAT).
+#   * minimum_per_order is 0.00: no minimum is documented beyond the rounding, which already
+#     makes every non-zero component at least USD 0.01.
+#
+# ASSUMPTIONS that are NOT verified from an official page (each is conservative or neutral):
+#   * the owner's account is a retail Alpaca Securities account trading through the API
+#     (commission-free); an account opened through a business partner may differ;
+#   * no SEC Section 31 change took effect between the last listed advisory and 2026-11-08;
+#   * the historical Alpaca pass-through followed the official SEC/FINRA/CAT rates above.
+# The schedule must be re-checked per account before paper (M4) or any live decision; the
+# registration binds this file's path and schedule_id, so any change needs a new schedule_id.
+schedule_id: alpaca-us-equities-conservative-2026-11-08
+description: >-
+  Alpaca US equities via API - zero commission; SEC Section 31, FINRA TAF and CAT pass-through at
+  the highest rates in force 2022-01..2026-11, each rounded up to USD 0.01 per order
+evidence: DOCUMENTED
+known: true
+source: https://files.alpaca.markets/disclosures/library/BrokFeeSched.pdf
+as_of: "2026-11-08"
+currency: USD
+default_liquidity: TAKER
+components:
+  - type: regulatory_sell
+    sec_rate: "0.0000278"   # 27.80 USD per million (SEC FY2024 order, in force 2024-05-22 .. 2025-05-13)
+    taf_per_share: "0.000195"  # FINRA TAF 2026 covered-equity rate (SR-FINRA-2024-019)
+    taf_max: "9.79"         # FINRA TAF 2026 per-trade maximum
+    minimum_per_order: "0.00"
+    granularity: "0.01"     # rounded up to the cent (per order: conservative, see above)
+  - type: per_share
+    sides: [BUY, SELL]
+    rate_per_share: "0.000048"  # CAT Fee 2024-1 0.000035 + Historical CAT Assessment 1 0.000013
+    granularity: "0.01"
+notes: >-
+  Highest SEC, TAF and CAT rates of 2022-01..2026-11 with per-order rounding up to the cent; an
+  upper bound of the documented daily aggregation. Taxes, FX and funding costs are not fees and
+  are not modelled here.
+sources:
+  - url: https://files.alpaca.markets/disclosures/library/BrokFeeSched.pdf
+    states: >-
+      Alpaca Brokerage Fee Schedule, revised 2026-10-12. Alpaca Securities does not charge
+      commissions except for index options, the Elite Smart Router and non-retail order flow.
+      Pass-through equities fees: SEC transaction fee, sells only, 0.0000206 x trade value; FINRA
+      TAF, sells only, 0 USD per share; FINRA CAT fee, buys and sells, 0.000003 USD per executed
+      equivalent share (NMS equities: 1 share = 1 executed equivalent share). Fees are calculated
+      on the exact executed quantity including fractional shares; each fee type is aggregated
+      separately per account per day and each total is rounded up to the nearest cent.
+    retrieved: "2026-11-08"
+  - url: https://alpaca.markets/support/regulatory-fees
+    states: >-
+      Alpaca support article (February 2026): SEC fee based on principal, sells only, rounded up
+      to the nearest penny; TAF based on shares, sells only, applied per trade, rounded up to the
+      nearest penny and capped; CAT fee = fee rate x executed equivalent shares, charged per trade
+      on purchases and sales in addition to the SEC/TAF fees.
+    retrieved: "2026-11-08"
+  - url: https://docs.alpaca.markets/us/docs/regulatory-fees
+    states: >-
+      Alpaca API documentation (updated 2025-10-03): TAF applies to sells only; CAT applies to
+      buys and sells; total fees are rounded up to the currency precision (example 0.00083 ->
+      0.01 USD); fees accrue intraday and the day's fees are charged at end of day; current
+      rates are in the brokerage fee schedule.
+    retrieved: "2026-11-08"
+  - url: https://docs.alpaca.markets/docs/fractional-trading
+    states: >-
+      Alpaca fractional trading documentation (updated 2026-10-28): fees for fractional trading
+      work the same way as with whole shares. (Order-type support for fractional orders is
+      inconsistent on the same page; see configs/research/stocks_baseline_v1.yaml.)
+    retrieved: "2026-11-08"
+  - url: https://www.sec.gov/files/rules/other/2022/34-94644.pdf
+    states: >-
+      SEC Release 34-94644 (2022-04-08), FY2022 annual adjustment: the current rate is 5.10 USD
+      per million; the Section 31 rate is 22.90 USD per 1,000,000 effective 2022-05-14.
+    retrieved: "2026-11-08"
+  - url: https://www.sec.gov/files/rules/other/2023/34-96724.pdf
+    states: >-
+      SEC Release 34-96724 (2023-01-23), FY2023: the current rate is 22.90 USD per million; the
+      rate is 8.00 USD per 1,000,000 effective 2023-02-27. SEC Fee Rate Advisory #3 (2023-03-01,
+      press release 2023-41) states that no mid-year adjustment is required for FY2023.
+    retrieved: "2026-11-08"
+  - url: https://www.sec.gov/files/rules/other/2024/34-99973.pdf
+    states: >-
+      SEC Release 34-99973 (2024-04-17), FY2024: the current rate is 8.00 USD per million; the
+      rate is 27.80 USD per 1,000,000 effective 2024-05-22.
+    retrieved: "2026-11-08"
+  - url: https://www.sec.gov/files/rules/other/2025/34-102779.pdf
+    states: >-
+      SEC Release 34-102779 (2025-04-08), FY2025: the current rate is 27.80 USD per million; the
+      rate is 0.00 USD per 1,000,000 effective 2025-05-14 (the appropriation was already
+      collected; a negative rate is not possible).
+    retrieved: "2026-11-08"
+  - url: https://www.sec.gov/files/rules/other/2026/34-104909.pdf
+    states: >-
+      SEC Release 34-104909 (2026-02-27) and Fee Rate Advisory 2026-2: 0.00 USD per million for
+      charge dates through 2026-04-03; 20.60 USD per 1,000,000 effective 2026-04-04, in effect
+      until 60 days after the FY2027 appropriation is enacted.
+    retrieved: "2026-11-08"
+  - url: https://www.sec.gov/rules-regulations/fee-rate-advisories
+    states: >-
+      SEC fee rate advisory index: the latest Section 31 transaction fee advisory is 2026-2
+      (2026-02-27); for FY2027 only a Section 6(b) filing-fee advisory (2026-08-21) is listed.
+    retrieved: "2026-11-08"
+  - url: https://www.finra.org/sites/default/files/2020-10/NOF%20IMM%20EFF%20FINRA-2020-032.pdf
+    states: >-
+      Federal Register notice of SR-FINRA-2020-032: covered equity TAF 0.000119 USD per share
+      (max 5.95) in 2020-2021; 0.000130 (max 6.49) in 2022; 0.000145 (max 7.27) in 2023;
+      0.000166 (max 8.30) in 2024.
+    retrieved: "2026-11-08"
+  - url: https://www.finra.org/rules-guidance/rule-filings/sr-finra-2024-019/fee-adjustment-schedule
+    states: >-
+      FINRA fee adjustment schedule (SR-FINRA-2024-019): covered equity TAF 0.000166 (max 8.30)
+      in 2024 and 2025; 0.000195 USD per share (max 9.79 per trade) in 2026; increases take
+      effect on January 1 of the stated year unless specified otherwise.
+    retrieved: "2026-11-08"
+  - url: https://www.finra.org/sites/default/files/2026-09/SR-FINRA-2026-021.pdf
+    states: >-
+      SR-FINRA-2026-021, effective upon filing under Exchange Act 19(b)(3)(A)(ii): the TAF is
+      paused (0.00 per share, max 0.00) for transactions from 2026-10-01 through 2026-12-31; the
+      2026 rates (0.000195 per share, max 9.79) resume on 2027-01-01.
+    retrieved: "2026-11-08"
+  - url: https://www.finra.org/rules-guidance/rulebooks/corporate-organization/section-1-member-regulatory-fees
+    states: >-
+      FINRA By-Laws Schedule A Section 1(b): each member is assessed a Trading Activity Fee for
+      each sale of a covered equity security, per share with a maximum charge per trade (the
+      default page version shows the 2024-2025 rate, 0.000166 per share, max 8.30).
+    retrieved: "2026-11-08"
+  - url: https://www.catnmsplan.com/cat-fee-alerts
+    states: >-
+      CAT fee alerts: CAT Fee 2024-1 0.000035 USD per executed equivalent share (alert
+      2024-08-01) and Historical CAT Assessment 1 0.000013 (alert 2024-08-08, in addition to CAT
+      Fee 2024-1); CAT Fee 2025-1 0.000022 replaces 2024-1 from the February 2025 invoice; CAT
+      Fee 2025-2 0.000009 from the August 2025 invoice; invoicing of 2025-2 and Historical CAT
+      Assessment 1 ends with November 2025 transactions; CAT Fee 2026-1 0.000001 and Historical
+      CAT Assessment 1A 0.000002 announced 2026-04-01.
+    retrieved: "2026-11-08"

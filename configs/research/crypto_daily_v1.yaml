@@ -1,0 +1,181 @@
+# Daily crypto study: Candidate D (Faber 2007 10-month trend timing) on BTC/USD and ETH/USD,
+# one bar per UTC day (ADR-0042; CRYPTO_TRADING_TRACK.md sections 2, 3, 5, 6 and 9;
+# risk_and_validation.md sections 5-8).
+# Why: every intraday crypto trial (T-0001..T-0005 on 15-minute bars, T-0011/T-0012 filters)
+# lost to costs. A Kraken Pro Tier 1 round trip of two taker fills costs about 1.6% (0.80% a
+# side), while BTC's median absolute daily move is about 1.2% and its median monthly move about
+# 7%. Holding for weeks to months is the untested idea: one round trip per trend leg instead of
+# several a day.
+# Everything below is fixed BEFORE the rule runs on real crypto data and is bound into the
+# trial's registration. Prepared 2026-11-09 on crypto/daily-v1; NOT registered. The owner
+# registers T-0016 on `sunshine` (budget 20; registering spends one trial) after reviewing the
+# dataset's quality report and the choices marked OWNER below. The rule has never been run on
+# real crypto data in any form; the only real-data step taken was acquiring the price dataset
+# and reading its quality report (bars, coverage, first candle per pair).
+study_id: crypto_daily_v1
+title: Daily crypto trend timing - Candidate D on BTC/USD and ETH/USD (UTC-day bars)
+track: CRYPTO
+description: >-
+  One frozen published monthly rule on a USD 50 ledger with the shared risk policy, where the
+  expected move per trade (a trend leg of weeks to months) is large relative to Kraken's 1.6%
+  taker round trip, unlike the 15-minute baselines whose moves were smaller than their costs.
+  T-0016: Faber (2007) 10-month moving-average trend timing on BTC/USD and ETH/USD. Prices are
+  Coinbase Exchange public daily candles (one per UTC day) as a proxy for Kraken; execution uses
+  Kraken's public pair metadata (increments and minimum order sizes) and the documented Kraken
+  Pro Tier 1 taker fee (0.80% per side), as in crypto_baseline_v1 (ADR-0018). Decisions at a
+  completed UTC month-end close, fills at the next UTC day's open.
+price_dataset: coinbase_btc_eth_usd_daily_v1
+# The proxy basis is measured, as for crypto_baseline_v1, on the recent common 15-minute week of
+# Coinbase and Kraken bars (no strategy is evaluated on it). It is the only Kraken price history
+# the project holds; it is a week of intraday bars, not a daily history.
+basis_datasets: [coinbase_btc_eth_usd_15m_recent_v1, kraken_btc_eth_usd_15m_recent_v1]
+instruments:
+  - {price_instrument_id: "COINBASE:BTC/USD", execution_instrument_id: "KRAKEN:BTC/USD"}
+  - {price_instrument_id: "COINBASE:ETH/USD", execution_instrument_id: "KRAKEN:ETH/USD"}
+# Kraken AssetPairs metadata recorded 2026-11-07 (trader data kraken-specs): BTC/USD minimum
+# 0.00006 BTC, tick 0.1; ETH/USD minimum 0.002 ETH, tick 0.01; minimum cost USD 0.5; quantity
+# step 1e-8. These are TODAY's minimums applied to the whole history; Kraken's minimums in
+# 2017-2025 differed (they were larger in earlier years) and are not modelled.
+instrument_specs: configs/instruments/kraken_spot_usd.yaml
+fee_schedule: configs/fees/kraken_spot_tier1_usd.yaml
+# Policy: the research-only variant of ADR-0041 (1% risk per trade, 2% total planned risk; every
+# cap, reserve and loss limit as base). Chosen 2026-11-09 before any result of this rule on the
+# crypto data was seen, for feasibility only: at 0.25% risk (USD 0.125) and 10-20% disaster
+# stops a position is USD 0.55-1.00, below Kraken's minimum orders (0.00006 BTC, 0.002 ETH)
+# for most of 2020-2026, so the base policy would mostly measure blocked entries. The owner chose
+# larger positions at USD 50 for the same reason (T-0015). At 1% risk positions are USD 2.5-5,
+# capped at USD 10; entries with wider stops can still fall below the minimums.
+policy: configs/policy/trend_sized_v1.yaml
+fills:
+  label: base
+  # As crypto_baseline_v1, unchanged: the same venue, order type and order size. Kraken point
+  # samples showed BTC 0.013 bps and ETH 0.045 bps full spread, so 1 bp per side is
+  # conservative; a USD 1-200 market-on-open order is far smaller than the top of either book.
+  half_spread_bps: "1.0"
+  # As crypto_baseline_v1: covers the decision-to-order delay and adverse selection. Here the
+  # order fills at the open of the UTC day after the signal, about a second after the close,
+  # on a market that never stops.
+  slippage_bps: "2.0"
+  participation: "0.10"   # at most 10% of a day's volume; USD 1-200 orders never come near it
+  latency_ms: 500         # as crypto_baseline_v1
+stress:
+  multiplier: "2"          # risk_and_validation section 7: at least twice the base friction
+  missed_entry_percent: 5  # deterministic simulated outages / missed trades
+loss_windows: [UTC_DAY, UTC_WEEK]  # CRYPTO section 3: 00:00 UTC days, Monday 00:00 UTC weeks
+session_basis: UTC_DAY
+annualisation_sessions: 365        # every UTC day is a session (CRYPTO section 9)
+# OWNER: 365 UTC days (one calendar year) of feature-only bars before every window, the
+# continuous deployment and the data load: the 24/7 counterpart of the ETF study's 260 XNYS
+# sessions (about one trading year). Candidate D needs ten month-end closes, at most
+# 31 x 10 = 310 UTC days (TrendTimingSpec.warmup_sessions_on), plus ATR(20), which needs 21
+# bars inside that span. A window starts on the 1st of a month, so its 365-day warm-up holds
+# the month ends of all 12 previous months, two more than the rule needs.
+warmup_sessions: 365
+splits:
+  # OWNER: development_start 2017-08-01. It is the first month boundary that (a) has the full
+  # 365-day warm-up inside both pairs' contiguous data and (b) makes the development period a
+  # whole number of three-month windows ending at the holdout start. BTC-USD has a candle on
+  # every UTC day from 2016-01-01; ETH-USD's first Coinbase candle is 2016-05-18 (GDAX listed
+  # ETH that week) and its candles are contiguous from 2016-05-23 (none on 21-22 May 2016). The
+  # 365th day before 2017-08-01 is 2016-08-01, inside both. 2017-05-01, the previous aligned
+  # start, would need ETH bars from 2016-05-01, before its listing. 2017-08 .. 2026-07 is 108
+  # months: 36 independent quarterly windows and 31 walk-forward folds (12 months train,
+  # 3 validation, 3 test), the first test window 2018-11-01. Chosen from the calendar, the
+  # rule's lookbacks and the first-candle dates only, before the rule ran on any of these bars.
+  development_start: "2017-08-01T00:00:00Z"
+  holdout_start: "2026-08-01T00:00:00Z"  # locked final test: the last three months
+  holdout_end: "2026-11-01T00:00:00Z"    # = the dataset's request end
+  walk_forward: {train_months: 12, validation_months: 3, test_months: 3, step_months: 3}
+  # Embargo 0, derived from the holding horizon as in etf_daily_v1. Every three-month window is
+  # an independent deployment that closes all positions at its end (ADR-0020, END_OF_DATA), so
+  # no trade outlives its window and no validation outcome can use a bar at or after the
+  # validation end. The 365-day time exit cannot serve as the embargo: it is longer than a
+  # validation window.
+  embargo_minutes: 0
+operating_costs_usd_per_month: "0.00"  # local compute, free public data, no paid LLM calls
+diagnostic_capitals: ["1000"]  # capital views: diagnostic only, never G2 or selection
+bootstrap:
+  replicates: 2000
+  # OWNER: a mean block of 30 UTC days (one month), not the 5 sessions of the other studies.
+  # The rule decides once a month and holds whole months, so a day's P&L depends on a position
+  # fixed at the last month end; month-long blocks keep each decision's marks together. Longer
+  # blocks give wider, more honest intervals. Chosen from the rule's monthly cycle, not data.
+  mean_block_sessions: "30"
+  seed: 20261107  # the project's fixed bootstrap seed, as every study
+universe_selection: >-
+  Fixed by the crypto track specification (BTC and ETH spot, CRYPTO section 2) before any data
+  was inspected; the same two pairs as crypto_baseline_v1, USD-quoted because the project's base
+  currency is USD (EUR pairs depend on the owner's account). No symbol was chosen from results.
+  Hindsight is not zero: BTC and ETH are the two assets that became and stayed the largest, and
+  in 2016-2017 ETH's survival was not obvious. Two strongly correlated pairs are close to one
+  independent bet. Coinbase Exchange candles stand in for Kraken prices; the Coinbase-Kraken
+  basis was measured only on one recent week of 15-minute bars, so daily basis risk in earlier
+  years (when venue prices diverged more) is unmeasured.
+horizon: >-
+  Daily bars, one per UTC day (00:00-24:00 UTC, Coinbase granularity 86400 s), seven days a
+  week, with multi-week holds. T-0016 decides only on a month-end bar's completed close (the
+  month's last UTC day, closing at 00:00 UTC on the 1st) and holds while the month-end close
+  stays above its 10-month average, for at most 365 UTC days, with a 4 x ATR(20) disaster stop
+  and a 3R target. Each three-month window is an independent deployment from USD 50 (ADR-0020):
+  a position still open at a window end is closed at the last close's estimated bid
+  (END_OF_DATA), so holds are cut at least every quarter, the 365-day time exit can bind only in
+  the continuous deployment, and the walk-forward embargo is 0. 365 UTC days of feature-only
+  bars precede every window. Loss windows: UTC day and Monday-UTC week. Statistics use UTC days,
+  365 per year. SAMPLE SIZE, stated before any run: G2 needs at least 100 completed
+  out-of-sample trades over at least 120 sessions. The walk-forward test span (2018-11-01 ..
+  2026-08-01, 31 folds) holds 93 month ends, so two pairs give at most 186 monthly decisions,
+  and a trend rule holds through most of them; every window starts flat and can enter each pair
+  at most three times. Walk-forward selection also holds cash in every fold whose validation
+  window lost. A monthly rule on two pairs will very probably stay far below 100 out-of-sample
+  trades, so G2 is expected to fail on the trade count whatever the returns; the 120-session
+  floor is met (about 2,830 UTC days).
+entry_exit_timing: >-
+  Decision at a completed daily bar (UTC day end + 1 s, i.e. 00:00:01 UTC). The order is a
+  next-open marketable buy limit: the estimated ask at the signal close plus 100 bps (a
+  market-on-open order with a 1% collar). It fills only at the open of the next UTC day's bar
+  plus the assumed half-spread and slippage, and only if that price is within the limit;
+  otherwise the entry is missed, and a missing bar at that open is also a missed entry. As in
+  the 15-minute crypto baseline, the next bar's open is its first trade after 00:00 UTC, about
+  a second before the simulated order is live; on a continuous market that price is the signal
+  close's neighbour, so the collar almost never binds and overnight gaps do not exist. Faber
+  trades at the month-end close; here the fill is the next UTC day's open, seconds later.
+  Exits. The exit signal (a month-end close below its 10-month average) and the time exit sell
+  at the next open. The disaster stop rests for the whole hold; it is not in the published
+  rule, but the policy needs one to size a trade. Inside a bar the stop is checked before the
+  target, and an open through the stop sells at that open (STOP_GAP). The 3R target is a
+  resting exit. All fills at estimated bid/ask plus slippage; Kraken Pro Tier 1 taker fees
+  (0.80%) on both legs, rounded up to USD 0.0001.
+  Policy. One pending entry at a time, at most 2 new entries per UTC day and at most 2 open
+  positions. When both pairs signal at the same month end, the first in instrument-id order
+  (BTC/USD) is taken and ETH/USD waits for a later month end. This is not the equal-weight
+  portfolio of the publication.
+  Size and minimum orders at USD 50. The per-trade risk budget is 0.25%, USD 0.125, including
+  both fees, the 10 bps gap allowance and the 1% collar used as the sizing entry price, so the
+  loss at the stop is about the stop distance plus 2.8% of the position. With a 4 x ATR(20)
+  stop 10-20% below the close, a position is about USD 0.55-1.00. Kraken's minimum order fits
+  that budget only while BTC/USD trades below about USD 9,200-16,300 (0.00006 BTC) and ETH/USD
+  below about USD 275-490 (0.002 ETH); the minimum cost of USD 0.5 also rejects every position
+  whose stop is more than about 22% away. (Computed with the research sizer on invented prices,
+  no market data.) Public price history (not a study result) puts BTC above USD
+  16,000 almost continuously since late 2020 and ETH above USD 490 since about the end of 2020,
+  so at USD 50 most entries after 2020 are expected to be rejected RISK_LIMIT (the smallest legal
+  order exceeds the per-trade risk) and the trade count falls further. The diagnostic USD 1000
+  view (risk USD 2.50, positions up to the USD 200 symbol cap) shows the rule without this
+  floor; it never counts toward G2.
+  Data. Coinbase Exchange public daily candles at raw prices (no adjustments exist for spot
+  crypto); no VWAP or trade count (the rule uses neither). A UTC day without trades has no
+  candle and counts as missing data: it resets the pair's daily features, and the rule then
+  cannot enter that pair for ten month ends. Coinbase prices proxy for Kraken execution
+  (ADR-0018); the basis is reported. The research engine sizes with the shared policy; no
+  runtime crypto profile, exchange adapter or paper route exists, so the result is research
+  evidence only.
+trials:
+  - trial_id: T-0016
+    spec_file: src/trader/strategies/specs/candidate_d_crypto_monthly_v1.yaml
+    hypothesis: >-
+      On BTC/USD and ETH/USD, holding a pair from the open after a UTC month-end close above the
+      average of its last 10 month-end closes until the open after a month-end close below it
+      (Faber 2007) earns positive net expectancy after Kraken Pro Tier 1 taker fees (0.80% per
+      side), the assumed spread and slippage, measured in independent three-month deployments
+      from USD 50 under the shared policy. The rule adds a 4 x ATR(20) disaster stop, a 3R
+      target and a 365-day limit.

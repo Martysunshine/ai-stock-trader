@@ -1,0 +1,97 @@
+# Sized daily ETF trend study (owner decision 2026-11-09, after etf_daily_v1; ADR-0041).
+# T-0014 (Candidate D, Faber 10-month trend timing) made +3.08 USD before costs over the
+# development period but lost -1.62 USD after them: at USD 50, 0.25% risk per trade sized its
+# positions at USD 1.5-5, and Alpaca's per-order cent roundings (~USD 0.04 a round trip) are
+# 1-3% of such a position. The owner chose to test the same frozen rule with positions near the
+# policy's USD 10 symbol cap, still from USD 50.
+#
+# SELECTION WARNING. This trial was designed AFTER the etf_daily_v1 results were seen, and it
+# reuses the same data, rule, windows and costs. It is an additional configuration in the trial
+# budget, and the selection-aware statistics must count it; its development-period result is
+# not independent of T-0014's. The four funds were named in the owner's decision before any
+# per-fund result of etf_daily_v1 was examined (the report shows no per-fund breakdown).
+#
+# Everything not listed below is copied unchanged from configs/research/etf_daily_v1.yaml,
+# whose comments justify it: dataset, fills, stress, loss windows, warm-up, splits (same locked
+# holdout), bootstrap seed and the USD 1000 diagnostic view.
+study_id: etf_trend_sized_v1
+title: Daily ETF trend timing with larger positions - Candidate D on SPY, QQQ, TLT and GLD at 1% risk per trade (daily SIP bars)
+track: STOCKS
+description: >-
+  The frozen Candidate D rule (Faber 2007 10-month moving-average trend timing, spec
+  candidate_d_etf_monthly_v1) on four funds that span US equities, US Treasuries and gold, on a
+  USD 50 ledger under configs/policy/trend_sized_v1.yaml: the shared policy with 1% risk per trade
+  and 2% total planned risk instead of 0.25% and 0.5%. With the rule's 4 x ATR(20) disaster stop
+  that sizes most positions at the unchanged USD 10 symbol cap. Gross exposure stays capped at 40%
+  with a USD 30 cash reserve and at most two open positions, so this is not an equal-weight
+  four-fund portfolio. Same Alpaca SIP daily bars, next-open fills and pass-through fees as
+  etf_daily_v1.
+price_dataset: alpaca_us_etfs_daily_sip_v1
+basis_datasets: []
+instruments:
+  - {price_instrument_id: "ARCX:SPY", execution_instrument_id: "ARCX:SPY"}
+  - {price_instrument_id: "XNAS:QQQ", execution_instrument_id: "XNAS:QQQ"}
+  - {price_instrument_id: "XNAS:TLT", execution_instrument_id: "XNAS:TLT"}
+  - {price_instrument_id: "ARCX:GLD", execution_instrument_id: "ARCX:GLD"}
+instrument_specs: configs/instruments/etfs_research.yaml
+fee_schedule: configs/fees/alpaca_us_equities_v2.yaml
+policy: configs/policy/trend_sized_v1.yaml
+fills:
+  label: base
+  half_spread_bps: "1.0"
+  slippage_bps: "1.0"
+  participation: "0.10"
+  latency_ms: 500
+stress:
+  multiplier: "2"
+  missed_entry_percent: 5
+loss_windows: [NY_SESSION, NY_WEEK, UTC_DAY, UTC_WEEK]
+session_basis: XNYS
+annualisation_sessions: 252
+warmup_sessions: 260
+splits:
+  development_start: "2017-02-01T00:00:00Z"
+  holdout_start: "2026-08-01T00:00:00Z"
+  holdout_end: "2026-11-01T00:00:00Z"
+  walk_forward: {train_months: 12, validation_months: 3, test_months: 3, step_months: 3}
+  embargo_minutes: 0
+operating_costs_usd_per_month: "0.00"
+diagnostic_capitals: ["1000"]
+bootstrap:
+  replicates: 2000
+  mean_block_sessions: "5"
+  seed: 20261107
+universe_selection: >-
+  Named by the owner on 2026-11-09 when choosing larger positions: SPY and QQQ (US large-cap
+  equities), TLT (long US Treasuries) and GLD (gold), the classic trend-following trio of stocks,
+  bonds and gold plus the Nasdaq-100. All four are in etf_daily_v1's universe and data. The
+  exposure tags still apply: SPY and QQQ share US_EQUITY_INDEX and are capped together at the
+  USD 10 symbol cap, TLT is US_TREASURY and GLD is GOLD. With at most two open positions and
+  signals taken in instrument-id order (ARCX:GLD, ARCX:SPY, XNAS:QQQ, XNAS:TLT), QQQ and TLT enter
+  only when an earlier fund is not held. Today's list applied to past history; small
+  survivorship bias as in etf_daily_v1.
+horizon: >-
+  Daily bars, one per XNYS regular session, with multi-day holds carried overnight. T-0015 decides
+  only on a month-end session's completed close and holds while the month-end close stays above
+  its 10-month average, for at most 260 sessions, with a 4 x ATR(20) disaster stop and a 3R
+  target. Each three-month window is an independent deployment from USD 50 (ADR-0020); a position
+  open at a window end is closed at the last close's estimated bid (END_OF_DATA). Loss windows: NY
+  session and week, UTC day and week; a breached day or week resumes at the next one, a 10%
+  drawdown or the USD 45 floor stops new entries for the rest of the window.
+entry_exit_timing: >-
+  As T-0014 in etf_daily_v1: decision at a completed month-end close (+1 s); a next-open
+  marketable buy limit at the estimated ask plus 100 bps, filled only at the next session's open
+  plus the assumed half-spread and slippage; exit signals and time exits sell at the next open;
+  the disaster stop rests for the whole hold and an open through it sells at that open; the 3R
+  target is a resting exit. Larger positions do not change fills: USD 10 orders stay far below the
+  10% participation cap on these funds.
+trials:
+  - trial_id: T-0015
+    spec_file: src/trader/strategies/specs/candidate_d_etf_monthly_v1.yaml
+    instruments: [ARCX:SPY, XNAS:QQQ, XNAS:TLT, ARCX:GLD]
+    hypothesis: >-
+      On SPY, QQQ, TLT and GLD, the Faber (2007) 10-month trend-timing rule, sized at 1% risk per
+      trade (positions near the USD 10 symbol cap) instead of 0.25%, earns positive net
+      expectancy after Alpaca's pass-through fees, the assumed spread and slippage, measured in
+      independent three-month deployments from USD 50; the larger positions make the per-order
+      cent roundings a small fraction of each trade.

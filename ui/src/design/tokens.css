@@ -1,0 +1,244 @@
+/*
+ * Design tokens. Light is the Trading 212 web register (white cards on Apple gray); dark is the
+ * iOS register (true black, raised gray cards). Both are designed, neither is a filter of the other.
+ * Chart series use the validated reference palette (dataviz skill, references/palette.md).
+ */
+@import '@fontsource-variable/inter/index.css';
+
+:root {
+  color-scheme: light;
+  --bg: #f5f5f7;
+  --surface: #ffffff;
+  --surface-2: #f9f9fb;
+  --surface-3: #f0f0f3;
+  --fill: rgba(118, 118, 128, 0.12);
+  --fill-strong: rgba(118, 118, 128, 0.2);
+  --hairline: rgba(0, 0, 0, 0.08);
+  --hairline-strong: rgba(0, 0, 0, 0.14);
+  --ink: #1d1d1f;
+  --ink-2: #6e6e73;
+  --ink-3: #8e8e93;
+  --accent: #0071e3;
+  /* One colour per money sleeve, used wherever that sleeve appears (ADR-0046). */
+  --sleeve-stocks: #0071e3;
+  --sleeve-crypto: #7a5af8;
+  --sleeve-cfd: #b7850f;
+  --accent-ink: #0066cc;
+  --accent-wash: rgba(0, 113, 227, 0.1);
+  --on-accent: #ffffff;
+
+  /* Direction of money: always paired with a sign and an arrow, never colour alone.
+     Mark pairs validated with the dataviz validator: light #16a06a/#f04a3f, dark #23ad78/#ff453a
+     (all checks pass against #ffffff / #1c1c1e). */
+  --gain: #0a7d3b;
+  --gain-mark: #16a06a;
+  --gain-wash: rgba(22, 160, 106, 0.12);
+  --loss: #c4312f;
+  --loss-mark: #f04a3f;
+  --loss-wash: rgba(240, 74, 63, 0.1);
+
+  /* Status (reserved; always with an icon and a label). */
+  --good: #0ca30c;
+  --warning: #fab219;
+  --warning-ink: #8a5a00;
+  --serious: #ec835a;
+  --critical: #d03b3b;
+
+  /* Chart chrome and categorical series (reference palette, light steps). */
+  --chart-grid: #ebebef;
+  --chart-axis: #c7c7cc;
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --series-4: #eda100;
+  --seq-250: #86b6ef;
+  --seq-450: #2a78d6;
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.04);
+  --shadow-float: 0 12px 40px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+  --glass: rgba(245, 245, 247, 0.72);
+  --scrim: rgba(0, 0, 0, 0.18);
+
+  --font: 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Consolas, monospace;
+
+  --r-card: 22px;
+  --r-row: 14px;
+  --r-control: 10px;
+
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --t-fast: 180ms;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #000000;
+    --surface: #1c1c1e;
+    --surface-2: #161618;
+    --surface-3: #2c2c2e;
+    --fill: rgba(118, 118, 128, 0.24);
+    --fill-strong: rgba(118, 118, 128, 0.36);
+    --hairline: rgba(255, 255, 255, 0.09);
+    --hairline-strong: rgba(255, 255, 255, 0.16);
+    --ink: #f5f5f7;
+    --ink-2: #a1a1a6;
+    --ink-3: #6e6e73;
+    --accent: #0a84ff;
+    --sleeve-stocks: #0a84ff;
+    --sleeve-crypto: #9d8cff;
+    --sleeve-cfd: #e0b23c;
+    --accent-ink: #409cff;
+    --accent-wash: rgba(10, 132, 255, 0.16);
+    --gain: #30d158;
+    --gain-mark: #23ad78;
+    --gain-wash: rgba(48, 209, 88, 0.14);
+    --loss: #ff6961;
+    --loss-mark: #ff453a;
+    --loss-wash: rgba(255, 69, 58, 0.14);
+    --warning-ink: #fab219;
+    --chart-grid: #232326;
+    --chart-axis: #3a3a3c;
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+    --series-4: #c98500;
+    --seq-250: #184f95;
+    --seq-450: #3987e5;
+    --shadow-card: none;
+    --shadow-float: 0 16px 48px rgba(0, 0, 0, 0.6);
+    --glass: rgba(22, 22, 24, 0.72);
+    --scrim: rgba(0, 0, 0, 0.5);
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #000000;
+  --surface: #1c1c1e;
+  --surface-2: #161618;
+  --surface-3: #2c2c2e;
+  --fill: rgba(118, 118, 128, 0.24);
+  --fill-strong: rgba(118, 118, 128, 0.36);
+  --hairline: rgba(255, 255, 255, 0.09);
+  --hairline-strong: rgba(255, 255, 255, 0.16);
+  --ink: #f5f5f7;
+  --ink-2: #a1a1a6;
+  --ink-3: #6e6e73;
+  --accent: #0a84ff;
+  --sleeve-stocks: #0a84ff;
+  --sleeve-crypto: #9d8cff;
+  --sleeve-cfd: #e0b23c;
+  --accent-ink: #409cff;
+  --accent-wash: rgba(10, 132, 255, 0.16);
+  --gain: #30d158;
+  --gain-mark: #23ad78;
+  --gain-wash: rgba(48, 209, 88, 0.14);
+  --loss: #ff6961;
+  --loss-mark: #ff453a;
+  --loss-wash: rgba(255, 69, 58, 0.14);
+  --warning-ink: #fab219;
+  --chart-grid: #232326;
+  --chart-axis: #3a3a3c;
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --seq-250: #184f95;
+  --seq-450: #3987e5;
+  --shadow-card: none;
+  --shadow-float: 0 16px 48px rgba(0, 0, 0, 0.6);
+  --glass: rgba(22, 22, 24, 0.72);
+  --scrim: rgba(0, 0, 0, 0.5);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.45;
+  font-feature-settings: 'cv11', 'ss01';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4,
+p {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: var(--accent-ink);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+code,
+.mono {
+  font-family: var(--mono);
+  font-size: 0.86em;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+::selection {
+  background: var(--accent-wash);
+}
+
+/* Thin, quiet scrollbars. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--fill-strong) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

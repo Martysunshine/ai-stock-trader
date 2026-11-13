@@ -1,0 +1,125 @@
+# Stock baseline study (implementation_roadmap.md M2; strategy_and_profitability.md sections 3-5).
+# Everything below is fixed BEFORE any trial runs and is bound into each trial's registration.
+# Prepared 2026-11-08; NOT registered yet: the integrator registers T-0006..T-0010 (budget 15,
+# 5 used) only after the Alpaca dataset is ACQUIRED and the split dates below are final.
+study_id: stocks_baseline_v1
+title: Stock baselines - Candidate A grid and Candidate B on five US mega-caps (5-minute IEX bars)
+track: STOCKS
+description: >-
+  Deterministic rule baselines for the stocks track on a USD 50 ledger with the shared risk
+  policy: the frozen runtime Candidate A on its registered 2x2 stop/target grid and the frozen
+  Candidate B stock mean-reversion rule, on Alpaca IEX 5-minute raw bars with splits and symbol
+  changes applied point-in-time. Execution assumes Alpaca's commission-free API stock trading
+  with SEC Section 31, FINRA TAF and CAT pass-through fees modelled at the highest rates in
+  force over the backtest and rounded up to the cent on every order.
+price_dataset: alpaca_us_equities_5m_v1
+basis_datasets: []  # bars come from the execution broker's own data API: no proxy basis to measure
+instruments:  # manifest price ids (XNYS calendar) -> execution specs (Nasdaq listings)
+  - {price_instrument_id: "XNYS:AAPL", execution_instrument_id: "XNAS:AAPL"}
+  - {price_instrument_id: "XNYS:MSFT", execution_instrument_id: "XNAS:MSFT"}
+  - {price_instrument_id: "XNYS:GOOGL", execution_instrument_id: "XNAS:GOOGL"}
+  - {price_instrument_id: "XNYS:AMZN", execution_instrument_id: "XNAS:AMZN"}
+  - {price_instrument_id: "XNYS:NVDA", execution_instrument_id: "XNAS:NVDA"}
+instrument_specs: configs/instruments/stocks_research.yaml
+fee_schedule: configs/fees/alpaca_us_equities_v2.yaml
+policy: configs/policy/base.yaml
+fills:
+  label: base
+  # One cent is 0.1-1 bps of a USD 100-1,000 share price, and these five names usually quote one
+  # to a few ticks wide (an assumption: no quote data is available, the IEX bars carry none).
+  # 2 bps per side (4 bps full spread) is deliberately wider. The stressed view doubles it to an
+  # 8 bps spread, still inside the policy's 10 bps entry-spread cap, so the stress test measures
+  # costs instead of rejecting every candidate on the assumed spread alone.
+  half_spread_bps: "2.0"
+  # Same as crypto: covers the decision-to-order delay and adverse selection. Base half-spread
+  # plus slippage (4 bps) stays inside the 5 bps entry-limit offset.
+  slippage_bps: "2.0"
+  # At most 10% of a bar's volume. IEX volume is single-venue (a small share of consolidated
+  # volume), so this cap is stricter than it looks; fractional USD 1-10 orders never reach it.
+  participation: "0.10"
+  latency_ms: 500
+stress:
+  multiplier: "2"          # risk_and_validation section 7: at least twice the base friction
+  missed_entry_percent: 5  # deterministic simulated outages / missed trades
+loss_windows: [NY_SESSION, NY_WEEK, UTC_DAY, UTC_WEEK]
+session_basis: XNYS
+annualisation_sessions: 252
+splits:
+  # development_start MUST equal the dataset's request.start in research/data_manifest.json
+  # (alpaca_us_equities_5m_v1). Set 2026-11-08 before any download or registration: Alpaca's
+  # IEX 5-minute history starts 2020-07-27 for all five symbols (probed that day), so the first
+  # whole month, 2020-08-01, is used (owner default: as early as the IEX feed allows).
+  development_start: "2020-08-01T00:00:00Z"
+  holdout_start: "2026-08-01T00:00:00Z"
+  holdout_end: "2026-11-01T00:00:00Z"
+  walk_forward: {train_months: 12, validation_months: 3, test_months: 3, step_months: 3}
+  embargo_minutes: 60      # = the 60-minute maximum hold of both candidates
+operating_costs_usd_per_month: "0.00"  # local compute, free IEX data, no paid LLM calls
+bootstrap:
+  replicates: 2000
+  mean_block_sessions: "5"
+  seed: 20261107
+universe_selection: >-
+  Fixed by strategy_and_profitability.md section 3 before any stock data was inspected: AAPL,
+  MSFT, GOOGL, AMZN and NVDA. This is today's mega-cap list applied to 2022-2026 history, not a
+  point-in-time universe: survivorship and look-ahead selection bias (these names are known to
+  have grown into the largest US companies) and single-sector concentration (five
+  technology-related names) are disclosed, not corrected. No symbol was chosen from results.
+  No point-in-time earnings or corporate-event calendar is available: Candidate B's "no
+  identified company event" condition and the section 3 rule to avoid scheduled earnings
+  windows are NOT enforced, so earnings-day bars are traded.
+horizon: >-
+  5-minute decision bars with a 15-minute context, regular session only; entries only inside the
+  calendar-relative entry window (first and last 30 minutes excluded, early closes included);
+  maximum hold 60 minutes and flat by the close procedure (no overnight positions); NY-session
+  and NY-week loss windows plus UTC day and week; NYSE sessions for statistics.
+entry_exit_timing: >-
+  Decision at bar end + 1 s, order live 500 ms later; marketable buy limit at the estimated ask
+  plus 5 bps, filled only at the next bar's open within the limit (TTL 120 s), otherwise missed.
+  Exits: time exit, close procedure and gap-through-stop at the next open; intrabar stop before
+  target when both are touched; target only when the estimated bid trades strictly through it.
+  All fills at estimated bid/ask plus slippage. Bars are Alpaca IEX (one venue): bar volume (the
+  participation cap) and the source session VWAP (the reference of both candidates) are
+  IEX-only, not consolidated. Orders are fractional day limit orders; Alpaca's documentation is
+  inconsistent about fractional limit orders, so their acceptance is an UNVERIFIED assumption
+  until a paper probe (M4). Alpaca zero commission plus SEC, FINRA TAF and CAT pass-through fees
+  (configs/fees/alpaca_us_equities_v2.yaml).
+trials:
+  - trial_id: T-0006
+    spec_file: src/trader/strategies/specs/candidate_a_v1.yaml
+    overrides: {atr_stop_multiplier: "1.0", reward_risk_multiple: "1.5"}
+    hypothesis: >-
+      After an established intraday uptrend (completed 15-minute context above the session's
+      first trade, positive trailing three-bar return and a close above the session VWAP), a
+      completed 5-minute close above the previous six highs on AAPL, MSFT, GOOGL, AMZN or NVDA
+      continues often and far enough to cover Alpaca's pass-through regulatory fees, spread and
+      slippage, with a 1.0 x ATR(6) stop and a 1.5R target within 60 minutes.
+  - trial_id: T-0007
+    spec_file: src/trader/strategies/specs/candidate_a_v1.yaml
+    overrides: {atr_stop_multiplier: "1.0", reward_risk_multiple: "2.0"}
+    hypothesis: >-
+      As T-0006 (Candidate A trend continuation on five US mega-caps, 5-minute bars) with a
+      1.0 x ATR(6) stop and a 2.0R target within 60 minutes, net of Alpaca regulatory fees.
+  - trial_id: T-0008
+    spec_file: src/trader/strategies/specs/candidate_a_v1.yaml
+    overrides: {atr_stop_multiplier: "1.5", reward_risk_multiple: "1.5"}
+    hypothesis: >-
+      As T-0006 (Candidate A trend continuation on five US mega-caps, 5-minute bars) with a
+      1.5 x ATR(6) stop and a 1.5R target within 60 minutes, net of Alpaca regulatory fees.
+  - trial_id: T-0009
+    spec_file: src/trader/strategies/specs/candidate_a_v1.yaml
+    overrides: {atr_stop_multiplier: "1.5", reward_risk_multiple: "2.0"}
+    hypothesis: >-
+      As T-0006 (Candidate A trend continuation on five US mega-caps, 5-minute bars) with a
+      1.5 x ATR(6) stop and a 2.0R target within 60 minutes (the frozen specification's
+      defaults), net of Alpaca regulatory fees.
+  - trial_id: T-0010
+    spec_file: src/trader/strategies/specs/candidate_b_stocks_v1.yaml
+    hypothesis: >-
+      In a quiet regime (efficiency ratio over one hour at most 0.30 and ATR(6)/ATR(12) at most
+      1.5), a completed 5-minute close at least 2 ATR(6) below the same-feed session VWAP on
+      AAPL, MSFT, GOOGL, AMZN or NVDA, confirmed by a stabilising bar, reverts toward the VWAP
+      with positive net expectancy after Alpaca's pass-through regulatory fees, spread and
+      slippage, using a 1.5 x ATR stop, the VWAP as target and a 60-minute time exit. The
+      specification's "no identified company event" condition cannot be enforced (no earnings
+      calendar).

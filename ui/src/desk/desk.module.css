@@ -1,0 +1,531 @@
+/* Sunshine Desk: one calm column of cards on the console's tokens (src/design/tokens.css). */
+
+.page code {
+  font-variant-ligatures: none;
+}
+
+/* A page inside the console shell: the shell provides width, padding and the page transition. */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+}
+
+@media (max-width: 640px) {
+  .page {
+    gap: var(--s-4);
+  }
+}
+
+/* ------------------------------------------------------------------ header */
+
+
+
+
+
+.links {
+  display: flex;
+  gap: var(--s-2);
+  flex-wrap: wrap;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: var(--fill);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 550;
+}
+
+.link:hover {
+  background: var(--fill-strong);
+  text-decoration: none;
+}
+
+.banner {
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-row);
+  background: var(--loss-wash);
+  color: var(--ink);
+  font-size: 14px;
+}
+
+/* ------------------------------------------------------------------ goal */
+.goal {
+  padding: var(--s-5) var(--s-5) var(--s-4);
+}
+
+.goalHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+}
+
+.goalLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  color: var(--ink-2);
+  font-size: 13px;
+  font-weight: 550;
+  flex-wrap: wrap;
+}
+
+.goalValue {
+  font-size: 44px;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-top: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.goalMeta {
+  color: var(--ink-2);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.goalPct {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 28px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.goalPctLabel {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-3);
+  letter-spacing: 0;
+}
+
+.track {
+  position: relative;
+  height: 14px;
+  margin-top: var(--s-5);
+  border-radius: 999px;
+  background: var(--fill);
+  overflow: hidden;
+}
+
+.fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--seq-450), var(--gain-mark));
+  overflow: hidden;
+}
+
+.shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.45) 50%, transparent 80%);
+  transform: translateX(-100%);
+  animation: shimmer 2.8s var(--ease-out) 1.2s infinite;
+}
+
+@keyframes shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.tick {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  width: 1px;
+  background: var(--hairline-strong);
+  transform: translateX(-0.5px);
+}
+
+.tickLabels {
+  position: relative;
+  height: 18px;
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.tickLabels span {
+  position: absolute;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.tickLabels span:first-child {
+  transform: none;
+}
+
+.tickLabels span:last-child {
+  transform: translateX(-100%);
+}
+
+@media (max-width: 640px) {
+  .tickLabels span:nth-child(even):not(:last-child) {
+    display: none;
+  }
+  .goalValue {
+    font-size: 34px;
+  }
+}
+
+.goalNote {
+  margin-top: var(--s-3);
+  color: var(--ink-2);
+  font-size: 13px;
+  max-width: 80ch;
+}
+
+/* ------------------------------------------------------------------ layout */
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: var(--s-5);
+  align-items: start;
+}
+
+@media (max-width: 960px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.colMain,
+.colSide {
+  min-width: 0;
+}
+
+/* ------------------------------------------------------------------ composer */
+.composer {
+  margin-top: var(--s-4);
+}
+
+.input {
+  width: 100%;
+  min-height: 108px;
+  resize: vertical;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: var(--r-row);
+  background: var(--surface-2);
+  box-shadow: inset 0 0 0 0.5px var(--hairline-strong);
+  color: var(--ink);
+  font: inherit;
+  line-height: 1.5;
+}
+
+.input:focus {
+  outline: none;
+  box-shadow: inset 0 0 0 1.5px var(--accent);
+}
+
+.composerBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  margin-top: var(--s-2);
+  flex-wrap: wrap;
+}
+
+.hint {
+  color: var(--ink-3);
+  font-size: 12px;
+}
+
+.hint kbd,
+.statusOk kbd {
+  font-family: var(--font);
+  font-size: 11px;
+  border: 0.5px solid var(--hairline-strong);
+  border-radius: 5px;
+  padding: 0 5px;
+}
+
+.send {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  border-radius: 999px;
+  padding: 9px 16px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform var(--t-fast) var(--ease-out), opacity var(--t-fast);
+}
+
+.send:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.send:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.statusOk,
+.statusError {
+  margin-top: var(--s-2);
+  font-size: 13px;
+  padding: 8px 12px;
+  border-radius: var(--r-control);
+}
+
+.statusOk {
+  background: var(--gain-wash);
+}
+
+.statusError {
+  background: var(--loss-wash);
+}
+
+/* ------------------------------------------------------------------ notes */
+.notes {
+  list-style: none;
+  margin: var(--s-5) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.note {
+  padding: var(--s-4) 0;
+  border-top: 0.5px solid var(--hairline);
+}
+
+.noteHead {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  flex-wrap: wrap;
+}
+
+.noteWhen {
+  color: var(--ink-3);
+  font-size: 12px;
+}
+
+.noteActions {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  flex-wrap: wrap;
+}
+
+.reopen {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12.5px;
+  font-weight: 550;
+}
+
+.copyPath {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 0;
+  background: none;
+  padding: 0;
+  color: var(--ink-2);
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+.copyPath:hover {
+  color: var(--ink);
+}
+
+.noteText {
+  margin-top: var(--s-2);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 14.5px;
+}
+
+.clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.more {
+  margin-top: 4px;
+  border: 0;
+  background: none;
+  padding: 0;
+  color: var(--accent-ink);
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+.reply {
+  margin-top: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-row);
+  background: var(--surface-2);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.replyHead {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--ink-2);
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.markdown {
+  font-size: 14px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.markdown p,
+.markdown ul,
+.markdown ol {
+  margin: 0 0 8px;
+}
+
+.markdown p:last-child {
+  margin-bottom: 0;
+}
+
+.markdown code {
+  background: var(--fill);
+  padding: 1px 5px;
+  border-radius: 5px;
+}
+
+.markdown pre {
+  background: var(--surface-3);
+  padding: 10px;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+/* ------------------------------------------------------------------ actions */
+.actions {
+  list-style: none;
+  margin: var(--s-4) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.action {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  gap: var(--s-3);
+}
+
+.actionDone {
+  opacity: 0.55;
+}
+
+.actionNum {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.actionTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-weight: 600;
+  font-size: 14.5px;
+  flex-wrap: wrap;
+}
+
+.actionWhy {
+  color: var(--ink-2);
+  font-size: 13.5px;
+  margin: 2px 0 var(--s-2);
+}
+
+/* ------------------------------------------------------------------ tables */
+.tableWrap {
+  overflow-x: auto;
+  margin-top: var(--s-3);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.table th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--ink-2);
+  font-size: 12px;
+  padding: 8px 10px;
+  border-bottom: 0.5px solid var(--hairline-strong);
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 10px;
+  border-bottom: 0.5px solid var(--hairline);
+  vertical-align: top;
+}
+
+.table tr:last-child td {
+  border-bottom: 0;
+}
+
+.table code {
+  background: var(--fill);
+  padding: 1px 5px;
+  border-radius: 5px;
+}
+
+.answerCell {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.answer {
+  border: 0;
+  border-radius: 999px;
+  padding: 4px 10px;
+  background: var(--accent-wash);
+  color: var(--accent-ink);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.foot {
+  color: var(--ink-3);
+  font-size: 12px;
+  text-align: center;
+  padding-top: var(--s-2);
+}

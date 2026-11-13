@@ -1,0 +1,66 @@
+# A trained veto on the hourly crypto breakout (T-0023): trial T-0026. DRAFT, fixed before any
+# run; see docs/drafts/adr_t0026.md. A model may only REFUSE signals of the frozen rule; it never
+# adds one or changes size, stop, target or timing. Data, instruments, specs, fees, policy, cost
+# views, warm-up, development period and locked final test come from the base study and are
+# bound into the registration unchanged. Register and run only on `sunshine`.
+kind: cfd_filter_study
+study_id: cfd_crypto_breakout_filter_v1
+title: A trained veto on the hourly crypto breakout (T-0023) - Bitcoin and Ether CFDs
+description: >-
+  Per rolling walk-forward fold, a regularised logistic model of nine cfd-breakout-v1 features
+  estimates the probability that a signal of T-0023's hourly breakout rule is profitable after
+  the quoted spread, slippage and financing, and refuses signals below a threshold chosen on the
+  validation window; a LightGBM challenger replaces it in a fold only with a strictly higher
+  validation objective. Each test window compares the rule alone, the rule with the filter,
+  random refusal at the filter's own refusal rate and equal-turnover refusal of the smallest
+  breaks, as fresh USD 100 deployments in the base, stressed and diagnostic views. The filter
+  works only if it beats all three in the base and the stressed view.
+base_study: configs/research/cfd_crypto_hourly_channel_v1.yaml
+base_trial: T-0023
+# development 2025-01-01..2026-08-01: three folds, test windows 2025-10..2025-12,
+# 2026-01..2026-03 and 2026-04..2026-06 (the base study's own three-month windows)
+walk_forward: {train_months: 6, validation_months: 3, test_months: 3, step_months: 3}
+# the rule's longest hold: a decision on the hour ending 00:00 UTC is flat by 21:00 UTC
+embargo_minutes: 1260
+known_before_registration: >-
+  T-0023's results on the same quotes and period (ADR-0055): 584 trades in the base view, +15.13
+  USD after the quoted spread and slippage, -27.55 stressed, +54.19 at mid prices, walk forward
+  +15.05; 42% winners, profit factor 1.07; shorts +28.24, longs -13.11; 3 of 7 windows lost in
+  the base view and 6 of 7 stressed; the continuous run paused at -2.30 USD after 130 trades.
+  The rule-alone control's result on the three test windows is therefore already known from
+  T-0023's report. T-0023 runs unfiltered as a forward test on the demo crypto sleeve since
+  2026-11-11 (ADR-0056). The nine features, the grids, the threshold grid and the controls were
+  chosen after reading those results but before any feature was computed, any label built or
+  any model fitted on these quotes; they were exercised on synthetic data only.
+trials:
+  - trial_id: T-0026
+    model_type: logistic
+    grid:
+      - {C: "0.01", class_weight: none}
+      - {C: "0.01", class_weight: balanced}
+      - {C: "0.1", class_weight: none}
+      - {C: "0.1", class_weight: balanced}
+      - {C: "1", class_weight: none}
+      - {C: "1", class_weight: balanced}
+    challenger:
+      model_type: lightgbm
+      grid:
+        - {num_leaves: "3", min_child_samples: "20", learning_rate: "0.05", n_estimators: "50"}
+        - {num_leaves: "3", min_child_samples: "40", learning_rate: "0.05", n_estimators: "100"}
+        - {num_leaves: "7", min_child_samples: "20", learning_rate: "0.05", n_estimators: "50"}
+        - {num_leaves: "7", min_child_samples: "40", learning_rate: "0.05", n_estimators: "100"}
+    calibration: platt
+    # P(net > 0) thresholds: with a 2R target the rule breaks even near p = 0.33 before costs
+    # and T-0023 won 42% of its trades; the threshold is chosen on each validation window only
+    threshold_grid: ["0.30", "0.33", "0.36", "0.39", "0.42", "0.45", "0.48", "0.51", "0.54"]
+    min_accepts: 30
+    controls: {random_seeds: 20, equal_turnover: smallest_break_first}
+    seed: 20261126
+    hypothesis: >-
+      On Capital.com's Bitcoin and Ether CFDs, a regularised logistic veto (a LightGBM challenger
+      per fold only when better on validation) of T-0023's hourly breakout signals, trained per
+      rolling six-month fold on nine cfd-breakout-v1 features, gives test-window net results
+      after the quoted spread, slippage and financing that beat the rule alone, random refusal at
+      the filter's own refusal rate and equal-turnover refusal of the smallest breaks, in both
+      the base and the stressed view, over 2025-10 to 2026-06 in independent three-month
+      deployments from USD 100.

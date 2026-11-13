@@ -1,0 +1,33 @@
+# CRYPTO_TRADING_TRACK.md section 2: BTC/EUR and ETH/EUR spot at Kraken (first candidate).
+# Venue identifiers, increments and minimums MUST be resolved from Kraken AssetPairs metadata;
+# the values below are placeholders marked UNKNOWN and are not tradable.
+- kind: crypto_spot
+  identity: {instrument_id: "KRAKEN:BTC/EUR", broker: kraken, broker_asset_id: unresolved-xbteur, symbol: BTC/EUR, currency: EUR, product_type: CRYPTO_SPOT, track: CRYPTO}
+  base_asset: BTC
+  quote_asset: EUR
+  fee_asset: QUOTE
+  quantity_step: "0.00000001"
+  min_quantity: "0.00005"
+  min_notional: "0.5"
+  price_tick: "0.1"
+  exposure_tags: [BTC, CRYPTO]
+  tradable: false
+  fractionable: true
+  evidence: UNKNOWN
+  as_of: "2026-11-06T00:00:00Z"
+  source: placeholder; fetch https://docs.kraken.com/api-reference/market-data/get-tradable-asset-pairs
+- kind: crypto_spot
+  identity: {instrument_id: "KRAKEN:ETH/EUR", broker: kraken, broker_asset_id: unresolved-etheur, symbol: ETH/EUR, currency: EUR, product_type: CRYPTO_SPOT, track: CRYPTO}
+  base_asset: ETH
+  quote_asset: EUR
+  fee_asset: QUOTE
+  quantity_step: "0.00000001"
+  min_quantity: "0.002"
+  min_notional: "0.5"
+  price_tick: "0.01"
+  exposure_tags: [ETH, CRYPTO]
+  tradable: false
+  fractionable: true
+  evidence: UNKNOWN
+  as_of: "2026-11-06T00:00:00Z"
+  source: placeholder; fetch https://docs.kraken.com/api-reference/market-data/get-tradable-asset-pairs

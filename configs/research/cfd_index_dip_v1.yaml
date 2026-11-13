@@ -1,0 +1,74 @@
+# The index dip on Capital.com index CFDs (ADR-0052, trial T-0018). Fixed in the decision record
+# before any result existed; registered before it is run. Nothing below was tuned.
+kind: cfd_study
+study_id: cfd_index_dip_v1
+title: Index dip on index CFDs - the frozen Candidate C rule on Capital.com's own US index quotes
+track: COMMODITIES
+description: >-
+  The Connors and Alvarez (2008) RSI(2) dip-buy with the frozen Candidate C parameters on four US
+  index CFDs, traded as the CFD practice sleeve would: USD 100 per window, at most 2% of equity
+  at the stop, one index trade at a time, total notional at most equity, fills on the broker's
+  own bid and ask, overnight financing charged each night.
+quote_dataset: capital_demo_cfd_1h_v1
+bars: {source_minutes: 60, calendar: BROKER_CFD, closed_run_max_weekdays: 2}
+instruments:
+  - {instrument_id: "CAPITAL:US500"}
+  - {instrument_id: "CAPITAL:US100"}
+  - {instrument_id: "CAPITAL:US30"}
+  - {instrument_id: "CAPITAL:RTY"}
+instrument_specs: configs/instruments/capital_demo_cfds_v1.yaml
+fee_schedule: configs/fees/capital_com_cfd_demo_v1.yaml
+policy: configs/policy/cfd_sleeve_v1.yaml
+costs:
+  slippage_bps: "1"
+  # today's median quoted spread (hourly dataset, 2026): a bar quoting less is not believed
+  spread_floor_bps: {"CAPITAL:US500": "0.8", "CAPITAL:US100": "0.6", "CAPITAL:US30": "0.4", "CAPITAL:RTY": "1.8"}
+stress:
+  spread_multiplier: "2"
+  slippage_multiplier: "2"
+  financing_charge_multiplier: "1.5"
+  financing_credits: false
+  missed_entry_percent: 5
+warmup_days: 400
+splits:
+  development_start: "2019-01-01T00:00:00Z"
+  holdout_start: "2026-08-01T00:00:00Z"
+  holdout_end: "2026-11-01T00:00:00Z"
+  walk_forward: {train_months: 12, validation_months: 3, test_months: 3, step_months: 3}
+  embargo_minutes: 0
+bootstrap:
+  replicates: 2000
+  mean_block_sessions: "5"
+  seed: 20261111
+annualisation_sessions: 260
+universe_selection: >-
+  The CFDs of the four US equity indices whose funds trial T-0017 tested (S&P 500, Nasdaq 100,
+  Dow Jones, Russell 2000), all quoted in USD. DE40 is left out: it was in no trial and its euro
+  conversion cost has not been read. RTY's hourly history starts on 2019-02-13, so it trades
+  once its 200-day average is warm (about the end of 2019).
+horizon: >-
+  Daily bars, one per UTC day built from the broker's hourly bid and ask, the weekend hours joined
+  to Monday. A long is held until the open after the first close above the 5-day average, for at
+  most 168 hours, with a stop 3 x ATR(10) below the signal close. Three-month windows from USD
+  100, each an independent deployment.
+entry_exit_timing: >-
+  Decision on a completed daily bar (its end, 24:00 UTC); a market order at the next bar's open
+  (00:00 UTC, or the Sunday-evening open), buying the ask plus 1 bp, sized at that price; refused
+  when the open is at or below the stop or the quoted spread is above 20 bps. The stop is
+  checked on the bid inside each bar, and an open below it sells at the open; the exit signal
+  and the time exit sell the bid at the next open. Overnight financing is charged at 22:00 UTC,
+  the Friday night three times.
+known_before_registration: >-
+  This rule was run on US index and sector funds in T-0013 and T-0017 (it earned before Alpaca's
+  fees and lost after them), and `trader journal scan` showed its signal days on the market
+  feed's daily bars from August 2025 to November 2026 (ADR-0049). The quality reports of the
+  Capital.com datasets were read before the periods were fixed (ADR-0052). No version of this
+  rule has been run on Capital.com's quotes.
+trials:
+  - trial_id: T-0018
+    spec_file: src/trader/strategies/specs/cfd_index_dip_v1.yaml
+    hypothesis: >-
+      On Capital.com's US index CFDs, the Connors and Alvarez RSI(2) dip-buy with the frozen
+      Candidate C parameters earns a positive net result after the quoted spread, slippage and
+      overnight financing, sized as the CFD practice sleeve (2% of USD 100 at the stop, one index
+      trade at a time), over 2019-2026 in independent three-month deployments.

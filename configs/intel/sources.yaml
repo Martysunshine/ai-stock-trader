@@ -1,0 +1,89 @@
+# Intel feed: news, insider filings and pre-market activity (ADR-0047, docs/runbook.md section 14).
+#
+# `python -m trader.intel refresh` (or `watch`) reads these sources and writes data/intel/
+# (gitignored); the console only reads those files. This is information for people and for later
+# research. Nothing here can place an order, and no strategy or risk rule reads it.
+#
+# Sources
+#   alpaca_news       Alpaca's news endpoint (Benzinga). Headline, summary and metadata only; the
+#                     article body is never requested. Uses the Alpaca paper keys.
+#   alpaca_premarket  Alpaca SIP 5-minute bars, 04:00-09:30 New York. The free plan serves SIP
+#                     data once it is 15 minutes old, so every request ends 16 minutes ago.
+#   edgar_form4       SEC EDGAR Form 4 (insider transactions), straight from the regulator. Needs
+#                     the owner's contact line SEC_EDGAR_CONTACT=... in .env; until then this
+#                     source reports "waiting" and the others keep working.
+#
+# Not connected (owner decision 2026-11-10): X posts and Grok's X search. Both charge about
+# USD 5 per 1,000 posts read (X pay-per-use; xAI x_search plus model fees). A later source is one
+# more entry here and one class in src/trader/intel/sources.py.
+#
+# Targets use the ids of configs/market/watchlists.yaml (`<group>:<symbol>`).
+#   news       Alpaca news symbols to follow for this instrument.
+#   news_proxy Set when the news is about a stand-in (a fund), not the instrument itself; the
+#              console shows this label next to every such headline.
+#   cik        The company's SEC number, verified against EDGAR's company list on 2026-11-10.
+#              The reader refuses a company record that does not list the symbol.
+#   premarket  true for US stocks (the symbol is the watchlist symbol).
+version: 1
+sources:
+  alpaca_news:
+    label: Alpaca news (Benzinga)
+    every_minutes: 5
+    lookback_hours: 48
+  alpaca_premarket:
+    label: Alpaca SIP pre-market
+    every_minutes: 5
+    delay_minutes: 16
+  edgar_form4:
+    label: SEC EDGAR Form 4
+    every_minutes: 30
+    lookback_days: 90
+    max_documents_per_run: 25
+targets:
+  - {id: "stocks:AAPL", news: [AAPL], cik: 320193, premarket: true}
+  - {id: "stocks:MSFT", news: [MSFT], cik: 789019, premarket: true}
+  - {id: "stocks:GOOGL", news: [GOOGL], cik: 1652044, premarket: true}
+  - {id: "stocks:AMZN", news: [AMZN], cik: 1018724, premarket: true}
+  - {id: "stocks:NVDA", news: [NVDA], cik: 1045810, premarket: true}
+  - {id: "stocks:META", news: [META], cik: 1326801, premarket: true}
+  - {id: "stocks:TSLA", news: [TSLA], cik: 1318605, premarket: true}
+  - {id: "stocks:JPM", news: [JPM], cik: 19617, premarket: true}
+  # The rest of the exploration book's 20 stocks (ADR-0057). Company numbers read from a market
+  # data provider's reference list on 2026-11-11; the reader still refuses an EDGAR record that
+  # does not list the symbol.
+  - {id: "stocks:AMD", news: [AMD], cik: 2488, premarket: true}
+  - {id: "stocks:AVGO", news: [AVGO], cik: 1730168, premarket: true}
+  - {id: "stocks:NFLX", news: [NFLX], cik: 1065280, premarket: true}
+  - {id: "stocks:V", news: [V], cik: 1403161, premarket: true}
+  - {id: "stocks:MA", news: [MA], cik: 1141391, premarket: true}
+  - {id: "stocks:COST", news: [COST], cik: 909832, premarket: true}
+  - {id: "stocks:WMT", news: [WMT], cik: 104169, premarket: true}
+  - {id: "stocks:XOM", news: [XOM], cik: 2115436, premarket: true}  # ExxonMobil Holdings Corporation
+  - {id: "stocks:LLY", news: [LLY], cik: 59478, premarket: true}
+  - {id: "stocks:UNH", news: [UNH], cik: 731766, premarket: true}
+  - {id: "stocks:ORCL", news: [ORCL], cik: 1341439, premarket: true}
+  - {id: "stocks:CRM", news: [CRM], cik: 1108524, premarket: true}
+  # Funds: no insiders.
+  - {id: "stocks:SPY", news: [SPY], premarket: true}
+  - {id: "stocks:QQQ", news: [QQQ], premarket: true}
+
+  - {id: "crypto:BTC", news: [BTCUSD]}
+  - {id: "crypto:ETH", news: [ETHUSD]}
+  - {id: "crypto:SOL", news: [SOLUSD]}
+  - {id: "crypto:XRP", news: [XRPUSD]}
+  - {id: "crypto:ADA", news: [ADAUSD]}
+  - {id: "crypto:DOGE", news: [DOGEUSD]}
+
+  # CFDs have no news feed of their own here. Where a US-listed fund tracks the same thing, its
+  # news is shown as a labelled stand-in. DE40 and EUR/USD have no free source: listed so the
+  # console can say so.
+  - {id: "cfd:GOLD", news: [GLD], news_proxy: "GLD, a gold fund"}
+  - {id: "cfd:SILVER", news: [SLV], news_proxy: "SLV, a silver fund"}
+  - {id: "cfd:OIL_CRUDE", news: [USO], news_proxy: "USO, an oil fund"}
+  - {id: "cfd:US500", news: [SPY], news_proxy: "SPY, an S&P 500 fund"}
+  - {id: "cfd:US100", news: [QQQ], news_proxy: "QQQ, a Nasdaq-100 fund"}
+  - {id: "cfd:DE40"}
+  - {id: "cfd:EURUSD"}
+  # The crypto sleeve's two CFDs (ADR-0049): the news is about the coin itself.
+  - {id: "cfd:BTCUSD", news: [BTCUSD]}
+  - {id: "cfd:ETHUSD", news: [ETHUSD]}

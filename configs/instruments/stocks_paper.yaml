@@ -1,0 +1,67 @@
+# Paper-runtime instrument specs (M4), separate from the research file
+# configs/instruments/stocks_research.yaml, whose contents registered trials pin.
+# Generated 2026-11-08 from Alpaca's paper Trading API, GET /v2/assets/{symbol}: asset id,
+# exchange, status, tradable and fractionable as returned. Minimum notional (USD 1), the
+# 1e-9 share step and the USD 0.01 tick follow Alpaca's fractional-trading documentation
+# (evidence DOCUMENTED); paper certification upgrades what it demonstrates. The adapter
+# re-checks these against Alpaca at start (AlpacaPaperAdapter.verify_instruments).
+- kind: equity
+  identity: {instrument_id: "XNAS:AAPL", broker: alpaca, broker_asset_id: b0b6dd9d-8b9b-48a9-ba46-b9d54906e415, symbol: AAPL, venue_mic: XNAS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-08T23:30:00Z"
+  source: Alpaca paper GET /v2/assets/AAPL (NASDAQ, status active)
+- kind: equity
+  identity: {instrument_id: "XNAS:MSFT", broker: alpaca, broker_asset_id: b6d1aa75-5c9c-4353-a305-9e2caa1925ab, symbol: MSFT, venue_mic: XNAS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-08T23:30:00Z"
+  source: Alpaca paper GET /v2/assets/MSFT (NASDAQ, status active)
+- kind: equity
+  identity: {instrument_id: "XNAS:GOOGL", broker: alpaca, broker_asset_id: 69b15845-7c63-4586-b274-1cfdfe9df3d8, symbol: GOOGL, venue_mic: XNAS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-08T23:30:00Z"
+  source: Alpaca paper GET /v2/assets/GOOGL (NASDAQ, status active)
+- kind: equity
+  identity: {instrument_id: "XNAS:AMZN", broker: alpaca, broker_asset_id: f801f835-bfe6-4a9d-a6b1-ccbb84bfd75f, symbol: AMZN, venue_mic: XNAS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-08T23:30:00Z"
+  source: Alpaca paper GET /v2/assets/AMZN (NASDAQ, status active)
+- kind: equity
+  identity: {instrument_id: "XNAS:NVDA", broker: alpaca, broker_asset_id: 4ce9353c-66d1-46c2-898f-fce867ab0247, symbol: NVDA, venue_mic: XNAS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-08T23:30:00Z"
+  source: Alpaca paper GET /v2/assets/NVDA (NASDAQ, status active)

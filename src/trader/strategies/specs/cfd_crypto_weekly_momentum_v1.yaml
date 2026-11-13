@@ -1,0 +1,17 @@
+# Weekly time-series momentum on crypto CFDs, long and short (ADR-0052, trial T-0019). Fixed in
+# the decision record before any result existed; nothing here was tuned. On the daily bar of
+# Sunday (it closes on Monday 00:00 UTC): long when the close is above the close seven days
+# earlier, short when it is below; stop 3 x ATR(10) from the close, target twice that distance
+# on the other side; out after one week. Daily bars of the broker's mid prices built from its
+# hourly quotes.
+strategy_id: cfd_crypto_weekly_momentum
+version: 1
+family: CFD_WEEKLY_MOMENTUM
+feature_version: daily-v1
+max_hold_hours: 168
+lookback_days: 7
+decision_weekday: 6
+atr_period: 10
+stop_atr_multiplier: "3"
+reward_risk: "2"
+research_status: UNVALIDATED - declared rule; evaluated only through registered trials

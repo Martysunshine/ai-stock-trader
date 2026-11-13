@@ -1,0 +1,20 @@
+# Day trade against the break of the last 24 hourly bars, CFD sleeve (ADR-0055, trial T-0022).
+# Fixed in the decision record before any result existed; nothing here was tuned. The same
+# break as cfd_hourly_breakout_v1, traded the other way: short above the highest high of the
+# previous 24 hourly bars, long below their lowest low. Stop 2 x the mean true range of the last
+# 24 bars from the close, target the same distance (a return towards the range, not a trend),
+# closed at 20:00 UTC at the latest.
+strategy_id: cfd_hourly_fade
+version: 1
+family: CFD_HOURLY_CHANNEL
+feature_version: hourly-v1
+mode: fade
+max_hold_hours: 13
+channel_hours: 24
+atr_hours: 24
+stop_atr_multiplier: "2"
+reward_risk: "1"
+entry_first_hour_utc: 7
+entry_last_hour_utc: 17
+flat_hour_utc: 20
+research_status: UNVALIDATED - declared rule; evaluated only through registered trials

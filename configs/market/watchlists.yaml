@@ -1,0 +1,84 @@
+# Market feed for the Trader Console's Markets page (ADR-0045, docs/runbook.md section 12).
+#
+# `python -m trader.market refresh` (or `watch --every 5`) fetches these instruments and writes
+# data/market/ (gitignored); the console only reads those files. This is display data, not the
+# trading runtime: nothing here can place an order, and no strategy or research study reads it.
+#
+# Fields: symbol (file name and URL id `<group>:<symbol>`), name, source_id (the source's own
+# name, default = symbol), decimals (the source's price decimals; the index's display `precision`
+# is this value clamped to 2-6), min_deal (CFDs: the broker's minimum deal size, shown only).
+# Basis and volume follow the source: Alpaca and Kraken bars are trades with volume; Capital.com
+# bars are bid/ask mids without volume.
+version: 1
+every_minutes: 5
+retention_days:
+  5m: 14
+  1h: 180
+  1d: 730
+groups:
+  - id: stocks
+    title: Stocks
+    source: alpaca_iex
+    source_label: Alpaca IEX
+    day_rule: nyse
+    instruments:
+      - {symbol: AAPL, name: Apple}
+      - {symbol: MSFT, name: Microsoft}
+      - {symbol: GOOGL, name: Alphabet (Class A)}
+      - {symbol: AMZN, name: Amazon}
+      - {symbol: NVDA, name: NVIDIA}
+      - {symbol: META, name: Meta Platforms}
+      - {symbol: TSLA, name: Tesla}
+      - {symbol: JPM, name: JPMorgan Chase}
+      # The rest of the exploration book's 20 stocks (configs/instruments/stocks_explore.yaml,
+      # ADR-0057), so every stock the bot trades has a row and a chart. One request serves all.
+      - {symbol: AMD, name: Advanced Micro Devices}
+      - {symbol: AVGO, name: Broadcom}
+      - {symbol: NFLX, name: Netflix}
+      - {symbol: V, name: Visa}
+      - {symbol: MA, name: Mastercard}
+      - {symbol: COST, name: Costco}
+      - {symbol: WMT, name: Walmart}
+      - {symbol: XOM, name: Exxon Mobil}
+      - {symbol: LLY, name: Eli Lilly}
+      - {symbol: UNH, name: UnitedHealth}
+      - {symbol: ORCL, name: Oracle}
+      - {symbol: CRM, name: Salesforce}
+      - {symbol: SPY, name: SPDR S&P 500 ETF}
+      - {symbol: QQQ, name: Invesco QQQ (Nasdaq-100) ETF}
+
+  # Pair names verified with Kraken's public AssetPairs endpoint on 2026-11-09 (result key,
+  # pair_decimals): XBTUSD (XXBTZUSD, 1), ETHUSD (XETHZUSD, 2), SOLUSD (SOLUSD, 2),
+  # XRPUSD (XXRPZUSD, 5), ADAUSD (ADAUSD, 6), XDGUSD (XDGUSD, 7). All quoted in USD, status online.
+  - id: crypto
+    title: Crypto
+    source: kraken_public
+    source_label: Kraken public OHLC
+    day_rule: utc
+    instruments:
+      - {symbol: BTC, name: Bitcoin, source_id: XBTUSD, decimals: 1}
+      - {symbol: ETH, name: Ether, source_id: ETHUSD, decimals: 2}
+      - {symbol: SOL, name: Solana, source_id: SOLUSD, decimals: 2}
+      - {symbol: XRP, name: XRP, source_id: XRPUSD, decimals: 5}
+      - {symbol: ADA, name: Cardano, source_id: ADAUSD, decimals: 6}
+      - {symbol: DOGE, name: Dogecoin, source_id: XDGUSD, decimals: 7}
+
+  # Capital.com DEMO epics, verified on 2026-11-09 via cap_market_search (name, decimals and
+  # minimum deal size as the broker reported them). Prices only; the feed never trades.
+  - id: cfd
+    title: CFDs
+    source: capital_demo
+    source_label: Capital.com demo
+    day_rule: utc
+    instruments:
+      - {symbol: GOLD, name: Gold, decimals: 2, min_deal: "0.01"}
+      - {symbol: SILVER, name: Silver, decimals: 3, min_deal: "1"}
+      - {symbol: OIL_CRUDE, name: Crude Oil Spot, decimals: 3, min_deal: "1"}
+      - {symbol: US500, name: US 500, decimals: 1, min_deal: "0.01"}
+      - {symbol: US100, name: US Tech 100, decimals: 1, min_deal: "0.001"}
+      - {symbol: DE40, name: Germany 40, decimals: 1, min_deal: "0.001"}
+      - {symbol: EURUSD, name: EUR/USD, decimals: 5, min_deal: "100"}
+      # The crypto sleeve trades these two as Capital.com CFDs (ADR-0049): its open trades
+      # are valued at the broker's own quote, not at Kraken's spot price.
+      - {symbol: BTCUSD, name: Bitcoin CFD, decimals: 2, min_deal: "0.0001"}
+      - {symbol: ETHUSD, name: Ether CFD, decimals: 2, min_deal: "0.001"}

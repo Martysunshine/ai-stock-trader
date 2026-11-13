@@ -1,0 +1,216 @@
+# Research instrument specs for the 16-ETF daily universe (dataset alpaca_us_etfs_daily_sip_v1).
+# Generated 2026-11-09 from Alpaca's paper Trading API, GET /v2/assets/{symbol} (read-only):
+# asset id, listing exchange, class us_equity, status active, tradable and fractionable as
+# returned. Minimum notional (USD 1), the 1e-9 share step and the USD 0.01 tick follow Alpaca's
+# fractional-trading documentation, as for configs/instruments/stocks_paper.yaml (evidence
+# DOCUMENTED). Instrument ids use the listing exchange's MIC (ARCA -> ARCX, NASDAQ -> XNAS);
+# price and execution ids are the same for this dataset.
+#
+# Product type ETF, not ORDINARY_EQUITY: markets_and_brokers.md section 7 separates US ETFs
+# (product-document restrictions for European retail investors; "do not default to SPY/QQQ/GLD
+# as live holdings") from the ordinary shares v1 trades. The STOCKS profile admits
+# ORDINARY_EQUITY only, so these specs are for research; trading any of them needs an
+# owner-approved profile and the owner's confirmation that the account may buy them.
+#
+# Concentration tags (ADR-0015: a shared underlying exposure, capped like one symbol at 20%):
+#   US_EQUITY_INDEX  SPY, QQQ, IWM, DIA - broad US equity index funds holding largely the same
+#                    large-cap stocks (every Dow member is in the S&P 500) that move nearly
+#                    together; treating them as diversifying one another would understate risk.
+#   US_TREASURY      TLT, IEF - US Treasury duration at two maturities.
+#   GOLD             GLD - physical gold, shared with any gold ETC, CFD or miner.
+# The nine Select Sector SPDRs carry no tag: ADR-0015 keeps sector labels out of tags, each
+# fund is its own sector capped as a single symbol, and their overlap with the index funds is
+# left to the 40% gross cap and disclosed in reports.
+# Leveraged and inverse funds are excluded (instructions.md section 5).
+- kind: etf
+  identity: {instrument_id: "ARCX:SPY", broker: alpaca, broker_asset_id: b28f4066-5c6d-479b-a2af-85dc1a8f16fb, symbol: SPY, venue_mic: ARCX, currency: USD, product_type: ETF, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: [US_EQUITY_INDEX]
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-09T00:23:00Z"
+  source: "Alpaca paper GET /v2/assets/SPY (ARCA, status active; State Street SPDR S&P 500 ETF Trust)"
+- kind: etf
+  identity: {instrument_id: "XNAS:QQQ", broker: alpaca, broker_asset_id: 2d9e926c-e17c-47c3-ad8c-26c7a594e48f, symbol: QQQ, venue_mic: XNAS, currency: USD, product_type: ETF, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: [US_EQUITY_INDEX]
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-09T00:23:00Z"
+  source: "Alpaca paper GET /v2/assets/QQQ (NASDAQ, status active; Invesco QQQ Trust, Series 1)"
+- kind: etf
+  identity: {instrument_id: "ARCX:IWM", broker: alpaca, broker_asset_id: ef2b4bb6-00eb-494a-ba4d-aa40dd9a701c, symbol: IWM, venue_mic: ARCX, currency: USD, product_type: ETF, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: [US_EQUITY_INDEX]
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-09T00:23:00Z"
+  source: "Alpaca paper GET /v2/assets/IWM (ARCA, status active; iShares Russell 2000 ETF)"
+- kind: etf
+  identity: {instrument_id: "ARCX:DIA", broker: alpaca, broker_asset_id: c8eaf60c-9175-4367-8c72-f492a03d476c, symbol: DIA, venue_mic: ARCX, currency: USD, product_type: ETF, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: [US_EQUITY_INDEX]
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-09T00:23:00Z"
+  source: "Alpaca paper GET /v2/assets/DIA (ARCA, status active; State Street SPDR Dow Jones Industrial Average ETF Trust)"
+- kind: etf
+  identity: {instrument_id: "ARCX:XLB", broker: alpaca, broker_asset_id: 33355bc0-315c-4cc4-96c3-696116a06e0f, symbol: XLB, venue_mic: ARCX, currency: USD, product_type: ETF, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-09T00:23:00Z"
+  source: "Alpaca paper GET /v2/assets/XLB (ARCA, status active; State Street Materials Select Sector SPDR ETF)"
+- kind: etf
+  identity: {instrument_id: "ARCX:XLE", broker: alpaca, broker_asset_id: 2dda3c96-2138-4313-b15b-dd870c7e0ea8, symbol: XLE, venue_mic: ARCX, currency: USD, product_type: ETF, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-09T00:23:00Z"
+  source: "Alpaca paper GET /v2/assets/XLE (ARCA, status active; State Street Energy Select Sector SPDR ETF)"
+- kind: etf
+  identity: {instrument_id: "ARCX:XLF", broker: alpaca, broker_asset_id: 3b86c9e5-335d-450d-bb2b-ee4a1a658aa3, symbol: XLF, venue_mic: ARCX, currency: USD, product_type: ETF, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-09T00:23:00Z"
+  source: "Alpaca paper GET /v2/assets/XLF (ARCA, status active; State Street Financial Select Sector SPDR ETF)"
+- kind: etf
+  identity: {instrument_id: "ARCX:XLI", broker: alpaca, broker_asset_id: 9f77ed09-d248-47f7-85c2-598b817fff8c, symbol: XLI, venue_mic: ARCX, currency: USD, product_type: ETF, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-09T00:23:00Z"
+  source: "Alpaca paper GET /v2/assets/XLI (ARCA, status active; State Street Industrial Select Sector SPDR ETF)"
+- kind: etf
+  identity: {instrument_id: "ARCX:XLK", broker: alpaca, broker_asset_id: d704f4fd-c735-44f8-a7fa-7a50fef08fe4, symbol: XLK, venue_mic: ARCX, currency: USD, product_type: ETF, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-09T00:23:00Z"
+  source: "Alpaca paper GET /v2/assets/XLK (ARCA, status active; State Street Technology Select Sector SPDR ETF)"
+- kind: etf
+  identity: {instrument_id: "ARCX:XLP", broker: alpaca, broker_asset_id: 7e84384a-a567-4146-a496-179b29950efc, symbol: XLP, venue_mic: ARCX, currency: USD, product_type: ETF, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-09T00:23:00Z"
+  source: "Alpaca paper GET /v2/assets/XLP (ARCA, status active; State Street Consumer Staples Select Sector SPDR ETF)"
+- kind: etf
+  identity: {instrument_id: "ARCX:XLU", broker: alpaca, broker_asset_id: a357339e-ecbd-4add-bd2f-55d9d5f8c9dc, symbol: XLU, venue_mic: ARCX, currency: USD, product_type: ETF, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-09T00:23:00Z"
+  source: "Alpaca paper GET /v2/assets/XLU (ARCA, status active; State Street Utilities Select Sector SPDR ETF)"
+- kind: etf
+  identity: {instrument_id: "ARCX:XLV", broker: alpaca, broker_asset_id: 39286e9d-cce3-48f4-ba07-9460564a493e, symbol: XLV, venue_mic: ARCX, currency: USD, product_type: ETF, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-09T00:23:00Z"
+  source: "Alpaca paper GET /v2/assets/XLV (ARCA, status active; State Street Health Care Select Sector SPDR ETF)"
+- kind: etf
+  identity: {instrument_id: "ARCX:XLY", broker: alpaca, broker_asset_id: 5829f367-3ef8-4f08-991f-95e69ac8611a, symbol: XLY, venue_mic: ARCX, currency: USD, product_type: ETF, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-09T00:23:00Z"
+  source: "Alpaca paper GET /v2/assets/XLY (ARCA, status active; State Street Consumer Discretionary Select Sector SPDR ETF)"
+- kind: etf
+  identity: {instrument_id: "XNAS:TLT", broker: alpaca, broker_asset_id: 1f8bfbdf-083a-4ebe-ad36-eaf6b6f0cb9d, symbol: TLT, venue_mic: XNAS, currency: USD, product_type: ETF, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: [US_TREASURY]
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-09T00:23:00Z"
+  source: "Alpaca paper GET /v2/assets/TLT (NASDAQ, status active; iShares 20 Year Treasury Bond ETF)"
+- kind: etf
+  identity: {instrument_id: "XNAS:IEF", broker: alpaca, broker_asset_id: 8846a9ea-d0b7-41c7-893e-1139b218e837, symbol: IEF, venue_mic: XNAS, currency: USD, product_type: ETF, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: [US_TREASURY]
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-09T00:23:00Z"
+  source: "Alpaca paper GET /v2/assets/IEF (NASDAQ, status active; iShares 7-10 Year Treasury Bond ETF)"
+- kind: etf
+  identity: {instrument_id: "ARCX:GLD", broker: alpaca, broker_asset_id: 675f7911-9aca-418a-acd5-07cfacb9d32b, symbol: GLD, venue_mic: ARCX, currency: USD, product_type: ETF, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: [GOLD]
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-09T00:23:00Z"
+  source: "Alpaca paper GET /v2/assets/GLD (ARCA, status active; SPDR Gold Trust, SPDR Gold Shares)"

@@ -1,0 +1,196 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.title {
+  font-size: 17px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.sub {
+  font-size: 13px;
+  color: var(--ink-2);
+  margin-top: 2px;
+}
+
+.legend {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--ink-2);
+  flex-wrap: wrap;
+}
+
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend i {
+  width: 14px;
+  height: 8px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.keyEntry {
+  background: color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+.keyBlocked {
+  background: var(--fill-strong);
+}
+
+.keyClose {
+  background: color-mix(in srgb, var(--warning) 35%, transparent);
+}
+
+.track {
+  position: relative;
+  height: 14px;
+  margin: 22px 0 0;
+}
+
+.seg {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+
+.seg:first-child {
+  border-radius: 999px 0 0 999px;
+}
+
+.close {
+  border-radius: 0 999px 999px 0;
+  background: color-mix(in srgb, var(--warning) 30%, transparent);
+}
+
+.entry {
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+.blocked {
+  background: var(--fill);
+}
+
+/* Time already gone is shown as a slightly deeper tone across all segments. */
+.elapsed {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: 999px 0 0 999px;
+  background: color-mix(in srgb, var(--ink) 7%, transparent);
+  pointer-events: none;
+}
+
+.mark {
+  position: absolute;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--surface);
+  cursor: default;
+  z-index: 2;
+  transition: transform var(--t-fast) var(--ease-out);
+}
+
+.mark:hover {
+  transform: scale(1.35);
+}
+
+.approved {
+  background: var(--accent);
+}
+
+.rejected {
+  background: var(--surface);
+  box-shadow: inset 0 0 0 2px var(--ink-3), 0 0 0 2px var(--surface);
+}
+
+.buy {
+  background: var(--gain-mark);
+  border-radius: 2px;
+  transform: rotate(45deg);
+}
+
+.sell {
+  background: var(--loss-mark);
+  border-radius: 2px;
+  transform: rotate(45deg);
+}
+
+.buy:hover,
+.sell:hover {
+  transform: rotate(45deg) scale(1.35);
+}
+
+.now {
+  position: absolute;
+  top: -8px;
+  bottom: -8px;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--ink);
+  border-radius: 1px;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.nowLabel {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  background: var(--ink);
+  color: var(--bg);
+  padding: 2px 6px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.scale {
+  position: relative;
+  height: 14px;
+  font-size: 11px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.scale span {
+  position: absolute;
+  transform: translateX(-50%);
+}
+
+.tip {
+  position: absolute;
+  bottom: calc(100% + 26px);
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: var(--surface);
+  font-size: 12px;
+  padding: 6px 9px;
+  border-radius: 8px;
+  white-space: nowrap;
+  z-index: 5;
+  pointer-events: none;
+  box-shadow: var(--shadow-float);
+}

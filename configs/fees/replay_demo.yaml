@@ -1,0 +1,18 @@
+# Synthetic fee schedule used by the replay demonstrator. NOT a broker quote.
+# Zero commission plus conservatively modelled US regulatory sell fees with a USD 0.01 per-order
+# minimum (the exact fractional rounding of any real broker is unverified).
+schedule_id: replay-demo-zero-commission-v1
+description: Replay assumption - zero commission, conservative regulatory sell fees
+evidence: REPLAY_SIMULATED
+known: true
+source: project assumption (docs/cost_feasibility.md)
+as_of: "2026-11-07"
+currency: USD
+default_liquidity: TAKER
+components:
+  - type: regulatory_sell
+    sec_rate: "0.0000278"
+    taf_per_share: "0.000166"
+    taf_max: "8.30"
+    minimum_per_order: "0.01"
+    granularity: "0.01"

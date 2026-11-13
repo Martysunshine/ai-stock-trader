@@ -1,0 +1,85 @@
+# Day trades on the break of the last 24 hourly bars, CFD sleeve: with the break (T-0021) and
+# against it (T-0022). ADR-0055. Fixed in the decision record before any result existed;
+# registered before it is run.
+kind: cfd_study
+study_id: cfd_hourly_channel_v1
+title: Day trades on the 24-hour channel - gold and two US index CFDs, with the break and against it
+track: COMMODITIES
+description: >-
+  Whether an hourly close beyond the range of the previous 24 hourly bars is followed, within the
+  same day, by more of the move or by a return, on the gold and US index CFDs, traded as the CFD
+  practice sleeve would: USD 100 per window, at most 2% of equity at the stop, one index trade at
+  a time, total notional at most equity, fills on the broker's own bid and ask, closed at 20:00
+  UTC so that no overnight financing is paid.
+quote_dataset: capital_demo_cfd_1h_v1
+bars: {source_minutes: 60, calendar: BROKER_CFD, closed_run_max_weekdays: 2, decision_minutes: 60}
+instruments:
+  - {instrument_id: "CAPITAL:GOLD"}
+  - {instrument_id: "CAPITAL:US500"}
+  - {instrument_id: "CAPITAL:US100"}
+instrument_specs: configs/instruments/capital_demo_cfds_v1.yaml
+fee_schedule: configs/fees/capital_com_cfd_demo_v1.yaml
+policy: configs/policy/cfd_sleeve_v1.yaml
+costs:
+  slippage_bps: "1"
+  # today's median quoted spread (hourly dataset, 2026): a bar quoting less is not believed
+  spread_floor_bps: {"CAPITAL:GOLD": "1.1", "CAPITAL:US500": "0.8", "CAPITAL:US100": "0.6"}
+stress:
+  spread_multiplier: "2"
+  slippage_multiplier: "2"
+  financing_charge_multiplier: "1.5"
+  financing_credits: false
+  missed_entry_percent: 5
+warmup_days: 30
+splits:
+  development_start: "2019-01-01T00:00:00Z"
+  holdout_start: "2026-08-01T00:00:00Z"
+  holdout_end: "2026-11-01T00:00:00Z"
+  walk_forward: {train_months: 12, validation_months: 3, test_months: 3, step_months: 3}
+  embargo_minutes: 0
+bootstrap:
+  replicates: 2000
+  mean_block_sessions: "5"
+  seed: 20261113
+annualisation_sessions: 260
+universe_selection: >-
+  The three CFDs of the CFD practice sleeve's allowlist with the tightest quoted spread in the
+  hourly dataset's quality report (2026 medians: gold 1.1 bps, US 500 0.8, US Tech 100 0.6) and
+  a smallest contract that fits USD 100; all quoted in USD. Silver (about 12 bps) and crude oil
+  (about 6 bps) cost too much for a day trade, EUR/USD's smallest contract is larger than the
+  sleeve, and DE40 needs a euro conversion whose cost has not been read. Chosen before any
+  result. The two indices move together, so one of them is open at a time.
+horizon: >-
+  Hourly bars as the broker quoted them, sessions counted as UTC days. A trade is opened on a
+  decision at an hour ending from 07:00 to 17:00 UTC and is closed by its stop, its target or at
+  20:00 UTC the same day. Three-month windows from USD 100, each an independent deployment.
+entry_exit_timing: >-
+  Decision on a completed hourly bar; a market order at the open of the next hourly bar, buying
+  the ask or selling the bid with 1 bp of slippage, sized at that price; refused when that open
+  is beyond the stop, at or after 20:00 UTC, or when the quoted spread is above 20 bps. Stops
+  and targets are checked inside each hourly bar on the side that would fill, the stop first
+  when both are touched; the time exit closes at the first open at or after 20:00 UTC. A trade
+  that is still open at the 22:00 UTC charge (it should not be) pays financing.
+known_before_registration: >-
+  No hourly rule has been run on these instruments in this project. The stock study's breakout
+  rule (Candidate A, 5-minute bars, T-0006 and others) lost before costs on US stocks, and the
+  daily index dip T-0018 was run on the index CFDs. The quality reports of the Capital.com
+  hourly datasets (spread by year, bars per weekday) were read before the instruments and the
+  period were fixed. The two trials are the two sides of one question and are selected between
+  only by the walk forward's validation windows.
+trials:
+  - trial_id: T-0021
+    spec_file: src/trader/strategies/specs/cfd_hourly_breakout_v1.yaml
+    hypothesis: >-
+      On Capital.com's gold, US 500 and US Tech 100 CFDs, entering in the direction of an hourly
+      close beyond the previous 24 hourly bars' range, with a stop twice the mean hourly true
+      range away and a target twice that distance, closed by 20:00 UTC, earns a positive net
+      result after the quoted spread and slippage, sized as the CFD practice sleeve, over
+      2019-2026 in independent three-month deployments.
+  - trial_id: T-0022
+    spec_file: src/trader/strategies/specs/cfd_hourly_fade_v1.yaml
+    hypothesis: >-
+      On the same CFDs, entering against an hourly close beyond the previous 24 hourly bars'
+      range, with a stop twice the mean hourly true range away and a target at the same distance,
+      closed by 20:00 UTC, earns a positive net result after the quoted spread and slippage,
+      sized as the CFD practice sleeve, over 2019-2026 in independent three-month deployments.

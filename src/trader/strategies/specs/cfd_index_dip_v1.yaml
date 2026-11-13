@@ -1,0 +1,20 @@
+# The index dip on index CFDs (ADR-0052, trial T-0018): the Connors and Alvarez (2008) RSI(2)
+# dip-buy with the frozen Candidate C parameters (candidate_c_etf_daily_v1.yaml; a test asserts
+# they agree), read on daily bars of the broker's mid prices built from its hourly quotes.
+# Decision at a completed UTC-day bar; long at the next open; stop 3 x ATR(10) below the close;
+# sold at the open after the first close above the 5-day average (the average at the signal is
+# only the sizer's cost gate); out after a week at the latest (the practice sleeve's time stop,
+# where Candidate C allowed ten sessions).
+strategy_id: cfd_index_dip
+version: 1
+family: CFD_INDEX_DIP
+feature_version: daily-v1
+max_hold_hours: 168
+trend_sma_days: 200
+rsi_period: 2
+rsi_entry_below: "10"
+exit_sma_days: 5
+atr_period: 10
+stop_atr_multiplier: "3"
+exit_reason: close_above_sma_5
+research_status: UNVALIDATED - frozen published rule; evaluated only through registered trials

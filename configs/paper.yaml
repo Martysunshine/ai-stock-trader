@@ -1,0 +1,26 @@
+# Paper mode (M4): `trader paper run --config configs/paper.yaml` (docs/runbook.md section 9).
+# Requires PostgreSQL (TRADER_PRACTICE_DATABASE_URL), paper keys in the OS keyring and host role DEV/PAPER.
+config_version: 1
+mode: paper
+live_enabled: false
+policy_file: policy/paper_practice_v1.yaml   # stocks sleeve: USD 100, 12 entries/session, 2 positions (ADR-0043)
+tracks_dir: tracks
+portfolio_id: pf-practice   # fresh baseline 2026-11-09; the USD 50 pilot history stays in database `trader`
+accounts:
+  - alias: practice
+    account_id: acct-alpaca-paper-practice
+    track: STOCKS
+    broker: alpaca_paper
+    capability_profile: capabilities/alpaca_paper_certified.yaml   # paper certification 2026-11-09 (NVDA); owner adopted
+    fee_schedule: fees/alpaca_us_equities_v2.yaml   # documented, conservative (ADR-0028)
+    # Alpaca's paper account charges no fees; book the schedule's charge on every fill so a
+    # practice result is what production would give (ADR-0050). Estimates, added back when
+    # cash is compared with the broker.
+    accrue_modelled_fees: true
+    instruments: instruments/stocks_paper.yaml   # Alpaca asset metadata; research file stays pinned
+    secret_ref: ai-stock-trader/alpaca-paper
+database:
+  backend: postgresql
+  # The practice database trader_practice (ADR-0043). A separate variable, so the bot refuses to
+  # start until it is set instead of writing the practice account into the USD 50 pilot database.
+  url_env: TRADER_PRACTICE_DATABASE_URL

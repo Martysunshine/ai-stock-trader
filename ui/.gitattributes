@@ -1,0 +1,4 @@
+# Binary design assets (Higgsfield-generated mesh, renders).
+*.glb binary
+*.png binary
+*.woff2 binary

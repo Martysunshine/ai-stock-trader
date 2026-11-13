@@ -1,0 +1,14 @@
+# Hypothetical CFD fixture for COMMODITIES_AND_CFD_TRACK.md §5 arithmetic ("before costs").
+# Spread and financing are modelled separately; this is not a Capital.com or IG quote.
+schedule_id: cfd-fixture-zero-commission
+description: Hypothetical CFD commission (zero; costs are spread + financing)
+evidence: REPLAY_SIMULATED
+known: true
+source: COMMODITIES_AND_CFD_TRACK.md section 5 hypothetical fixture
+as_of: "2026-11-06"
+currency: USD
+default_liquidity: TAKER
+components:
+  - type: flat_per_order
+    sides: [BUY, SELL]
+    amount: "0"

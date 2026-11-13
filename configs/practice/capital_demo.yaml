@@ -1,0 +1,58 @@
+# Capital.com DEMO practice rules for the assistant: the gold/CFD commodities sleeve (ADR-0044,
+# ADR-0046). Enforced before every order preview by the PreToolUse guard
+# `python -m trader.practice.capital_guard` (.claude/settings.json) and by the practice journal
+# (trader.practice.journal). Demo only: the capital-demo launcher forces CAP_ENV=demo and an
+# epic allowlist (trader.config.secrets.CAPITAL_DEMO_EPICS): these seven plus the crypto sleeve's
+# two (configs/practice/crypto_cfd.yaml).
+#
+# The sleeve starts at USD 100 and compounds: its equity is 100 plus the journal's closed results,
+# and every limit below is a fraction of that equity. The demo account's own USD 1000 balance is
+# not the sleeve. Epics, minimum deal sizes and decimals were read with cap_market_search on
+# 2026-11-09 (demo account, USD). Maximum sizes keep one position's notional near USD 75-125 at
+# that day's prices (gold 4103, silver 52.7, crude 86.7, US500 7548, US100 27847, DE40 26349 EUR,
+# EURUSD 1.1203); review them when the sleeve has grown by half.
+#
+# Short-term trading (ADR-0049, owner decision 2026-11-10): trades last hours to days, a week at
+# most, and every plan has a target no further than twice its planned risk (the stock rule's
+# multiple). Costs here are the spread (0.005% to 0.1% of the price, read 2026-11-10) and
+# overnight financing (0.01% to 0.02% a night on a long), so targets of one to two percent work.
+venue: capital.com-demo
+account_currency: USD
+sleeve_start_usd: "100"
+# 2% at the stop since ADR-0049 (it was 1%). The one setup traded here, the index dip, has a
+# disaster stop three ATR away that about one trade in ten reached in trial T-0017; the usual
+# losing trade lost about 1.5% of the position. At 1% the smallest US100 contract (about USD 28)
+# fitted 4 of 27 signals on the feed's bars from August 2025 to November 2026, at 2% 25 of 27.
+risk_fraction: "0.02"         # |entry - stop| x size x fx_to_usd <= 2% of sleeve equity, per trade
+floor_fraction: "0.90"        # no new trades at or below 90% of the start (the stocks sleeve's floor)
+max_open_trades: 4             # the whole sleeve (ADR-0056; it was 2)
+max_open_trades_per_setup: 2   # each setup, and the trades planned by hand together, as each trial ran
+max_opens_per_utc_day: 4       # each setup, and by hand together
+plan_window_minutes: 15       # a PLAN journal entry must precede the order
+long_only: false
+max_hold_hours: 168           # time stop: one week after the open; an overdue trade blocks new plans
+max_reward_risk: "2"          # target at most 2 x the planned risk from the entry
+journal: runs/practice/capital_demo_journal.jsonl
+epics:
+  GOLD:      {name: Gold,           quote_currency: USD, decimals: 2, min_size: "0.01",  max_size: "0.03"}
+  SILVER:    {name: Silver,         quote_currency: USD, decimals: 3, min_size: "1",     max_size: "2"}
+  OIL_CRUDE: {name: Crude Oil Spot, quote_currency: USD, decimals: 3, min_size: "1",     max_size: "1"}
+  US500:     {name: US 500,         quote_currency: USD, decimals: 1, min_size: "0.01",  max_size: "0.01"}
+  US100:     {name: US Tech 100,    quote_currency: USD, decimals: 1, min_size: "0.001", max_size: "0.004"}
+  DE40:      {name: Germany 40,     quote_currency: EUR, decimals: 1, min_size: "0.001", max_size: "0.004"}
+  EURUSD:    {name: EUR/USD,        quote_currency: USD, decimals: 5, min_size: "100",   max_size: "100"}
+  # ADR-0056: the index dip trades the four indices of its trial T-0018. Read 2026-11-11 with the
+  # demo API's /markets: US30 52,329 (minimum 0.001), RTY 2,847 (minimum 0.01), both USD.
+  US30:      {name: US 30,          quote_currency: USD, decimals: 1, min_size: "0.001", max_size: "0.002"}
+  RTY:       {name: US Russell 2000, quote_currency: USD, decimals: 1, min_size: "0.01",  max_size: "0.04"}
+  # ADR-0060: practice commodities, read 2026-11-11 (copper 6.37, Brent 92.3, heating oil 4.19,
+  # natural gas 3.51 USD); maximum sizes keep one position's notional near USD 100.
+  COPPER:     {name: Copper,         quote_currency: USD, decimals: 5, min_size: "10",  max_size: "15"}
+  OIL_BRENT:  {name: Brent Oil Spot, quote_currency: USD, decimals: 3, min_size: "1",   max_size: "1"}
+  HEATINGOIL: {name: Heating Oil,    quote_currency: USD, decimals: 4, min_size: "10",  max_size: "20"}
+  NATURALGAS: {name: Natural Gas,    quote_currency: USD, decimals: 4, min_size: "10",  max_size: "25"}
+# One open trade per group: indices fall and recover together, so two of them bought on the same
+# dip are one bet at twice the size (trial T-0017 capped the index funds together the same way).
+groups:
+  indices: [US500, US100, DE40, US30, RTY]
+  oil: [OIL_CRUDE, OIL_BRENT, HEATINGOIL]

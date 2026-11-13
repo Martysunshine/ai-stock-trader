@@ -1,0 +1,70 @@
+# Candidate D - trend timing on month-end closes for BTC/USD and ETH/USD on UTC-day bars.
+# Source: Mebane T. Faber, "A Quantitative Approach to Tactical Asset Allocation",
+# The Journal of Wealth Management 9(4), Spring 2007, pp. 69-79 (SSRN 962461). Published rule:
+# at each month end, hold an asset while its monthly close is above its 10-month simple moving
+# average; move to cash when the monthly close is below it.
+# FROZEN SPECIFICATION (src/trader/strategies/trend_timing.py), the crypto counterpart of
+# candidate_d_etf_monthly_v1.yaml. Written 2026-11-09 before any strategy ran on real crypto
+# data; every value is the ETF specification's unless the 24/7 calendar required a change, and
+# each change is justified below. Nothing here was tuned on any data. Any change is a new trial.
+# - Calendar (the reason for the changes). Track CRYPTO runs on the UTC-day calendar
+#   (Utc247Calendar): one completed bar per UTC day [00:00, 24:00) UTC, seven days a week. The
+#   month-end session is the month's last calendar day; its bar closes at 00:00 UTC on the 1st
+#   of the next month and the decision is taken one second later. There are no holidays or
+#   early closes, so month ends are fixed years in advance. The rule refuses any other calendar.
+# - Entry: month-end close > SMA of the last 10 month-end closes (the current one included) ->
+#   long candidate, filled at the next session's open when flat (holding: OVERNIGHT): the open
+#   of the 1st's UTC-day bar, the first trade after 00:00 UTC, as the 15-minute crypto
+#   baseline fills at the next bar's open. While the pair is held, the candidate is rejected
+#   instrument_busy, which means "keep holding".
+# - Exit signal: month-end close < that SMA -> sell at the next open.
+# - Disaster stop: signal close - 4 x Wilder ATR(20) of daily bars (sizes the position, rests for
+#   the whole hold). Kept at 20 bars: ATR(n) is a volatility estimate over n daily true ranges,
+#   and on a 24/7 market every UTC day, weekends included, is a full trading day with its own
+#   range, so 20 bars are 20 observations of the same quantity as on XNYS (about three weeks
+#   of calendar time instead of four). The calendar does not require a change.
+# - Target: signal close + 3 x (signal close - stop); a resting exit (target_role: EXIT) that
+#   truncates rare outsized runs and is the cost-coverage gate of ADR-0019. Kept.
+# - Time exit: CHANGED from 260 to 365 sessions. The ETF specification states the time exit as
+#   "about one year" and expresses it in XNYS sessions (about 252 a year). On the UTC-day
+#   calendar a session is a calendar day, so 260 sessions would be about eight and a half
+#   months; 365 UTC days keep the frozen meaning of one year. It binds only in the continuous
+#   deployment: every three-month window closes its positions at its end (END_OF_DATA).
+# - A missing UTC day resets the features: no entry until 10 new month ends have passed, and a
+#   held position is sold after the next month end (MONTHLY_SMA_UNAVAILABLE, fail closed).
+# - Execution: the next-open order is a marketable limit 100 bps (1%) above the estimated ask,
+#   i.e. a market-on-open order with a 1% collar. Kept. On a continuous market the next open is
+#   the first trade after 00:00 UTC, about a second after the signal close, so the collar
+#   almost never binds; it still refuses a fill more than 1% above the signal. The gap allowance
+#   is the policy floor (10 bps); a move through the stop at an open is filled at that open by
+#   the engine (STOP_GAP). entry_ttl_seconds (120) is not used by next-open orders. Kept.
+# Study requirement: warmup_sessions >= 310 (ten month ends need at most 31 x 10 UTC days).
+# Deviations from the publication: next-open instead of month-end-close execution (one second
+# later on this calendar); cash earns nothing; position sizes come from the risk policy (0.25%
+# risk per trade, at most 2 open positions, one pending entry, first in instrument-id order when
+# both pairs signal at the same month end) instead of equal weights; the stop, target and time
+# exit are additions; Faber tested asset-class indices, not crypto assets.
+strategy_id: candidate_d_crypto_trend_timing
+version: 1
+family: CANDIDATE_D
+track: CRYPTO
+feature_version: daily-v1
+source: >-
+  Faber, M. T. (2007). A Quantitative Approach to Tactical Asset Allocation. The Journal of
+  Wealth Management 9(4), 69-79. SSRN 962461. Rule: monthly close above the 10-month simple
+  moving average -> invested; below -> cash.
+universe:
+  - KRAKEN:BTC/USD
+  - KRAKEN:ETH/USD
+holding: OVERNIGHT
+max_hold_sessions: 365
+target_role: EXIT
+use_source_vwap: false
+month_end_sma_months: 10
+atr_period_sessions: 20
+stop_atr_multiplier: "4"
+target_risk_multiple: "3"
+entry_limit_offset_bps: "100"
+entry_ttl_seconds: 120
+gap_allowance_bps: "10"
+research_status: UNVALIDATED - frozen rule; evaluated only through registered trials

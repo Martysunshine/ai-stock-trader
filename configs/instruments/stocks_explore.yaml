@@ -1,0 +1,245 @@
+# Paper-runtime instrument specs for the aggressive exploration book (ADR-0057): the 20 most
+# traded large US stocks, all fractionable. Generated 2026-11-11T16:58:00Z from Alpaca's paper Trading
+# API, GET /v2/assets/{symbol}: asset id, exchange, status, tradable and fractionable as
+# returned. Minimum notional, share step and tick as in stocks_paper.yaml (Alpaca's fractional
+# trading documentation). The adapter re-checks these against Alpaca at start.
+- kind: equity
+  identity: {instrument_id: "XNAS:AAPL", broker: alpaca, broker_asset_id: b0b6dd9d-8b9b-48a9-ba46-b9d54906e415, symbol: AAPL, venue_mic: XNAS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-11T16:58:00Z"
+  source: Alpaca paper GET /v2/assets/AAPL (NASDAQ, status active)
+- kind: equity
+  identity: {instrument_id: "XNAS:MSFT", broker: alpaca, broker_asset_id: b6d1aa75-5c9c-4353-a305-9e2caa1925ab, symbol: MSFT, venue_mic: XNAS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-11T16:58:00Z"
+  source: Alpaca paper GET /v2/assets/MSFT (NASDAQ, status active)
+- kind: equity
+  identity: {instrument_id: "XNAS:GOOGL", broker: alpaca, broker_asset_id: 69b15845-7c63-4586-b274-1cfdfe9df3d8, symbol: GOOGL, venue_mic: XNAS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-11T16:58:00Z"
+  source: Alpaca paper GET /v2/assets/GOOGL (NASDAQ, status active)
+- kind: equity
+  identity: {instrument_id: "XNAS:AMZN", broker: alpaca, broker_asset_id: f801f835-bfe6-4a9d-a6b1-ccbb84bfd75f, symbol: AMZN, venue_mic: XNAS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-11T16:58:00Z"
+  source: Alpaca paper GET /v2/assets/AMZN (NASDAQ, status active)
+- kind: equity
+  identity: {instrument_id: "XNAS:NVDA", broker: alpaca, broker_asset_id: 4ce9353c-66d1-46c2-898f-fce867ab0247, symbol: NVDA, venue_mic: XNAS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-11T16:58:00Z"
+  source: Alpaca paper GET /v2/assets/NVDA (NASDAQ, status active)
+- kind: equity
+  identity: {instrument_id: "XNAS:META", broker: alpaca, broker_asset_id: fc6a5dcd-4a70-4b8d-b64f-d83a6dae9ba4, symbol: META, venue_mic: XNAS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-11T16:58:00Z"
+  source: Alpaca paper GET /v2/assets/META (NASDAQ, status active)
+- kind: equity
+  identity: {instrument_id: "XNAS:TSLA", broker: alpaca, broker_asset_id: 8ccae427-5dd0-45b3-b5fe-7ba5e422c766, symbol: TSLA, venue_mic: XNAS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-11T16:58:00Z"
+  source: Alpaca paper GET /v2/assets/TSLA (NASDAQ, status active)
+- kind: equity
+  identity: {instrument_id: "XNAS:AMD", broker: alpaca, broker_asset_id: 03fb07bb-5db1-4077-8dea-5d711b272625, symbol: AMD, venue_mic: XNAS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-11T16:58:00Z"
+  source: Alpaca paper GET /v2/assets/AMD (NASDAQ, status active)
+- kind: equity
+  identity: {instrument_id: "XNAS:AVGO", broker: alpaca, broker_asset_id: 7a8b4fcf-0622-47ef-8541-de7f70ffc0c4, symbol: AVGO, venue_mic: XNAS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-11T16:58:00Z"
+  source: Alpaca paper GET /v2/assets/AVGO (NASDAQ, status active)
+- kind: equity
+  identity: {instrument_id: "XNAS:NFLX", broker: alpaca, broker_asset_id: bb2a26c0-4c77-4801-8afc-82e8142ac7b8, symbol: NFLX, venue_mic: XNAS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-11T16:58:00Z"
+  source: Alpaca paper GET /v2/assets/NFLX (NASDAQ, status active)
+- kind: equity
+  identity: {instrument_id: "XNYS:JPM", broker: alpaca, broker_asset_id: e3047683-637a-4fb2-b71d-805cd6fec95d, symbol: JPM, venue_mic: XNYS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-11T16:58:00Z"
+  source: Alpaca paper GET /v2/assets/JPM (NYSE, status active)
+- kind: equity
+  identity: {instrument_id: "XNYS:V", broker: alpaca, broker_asset_id: 4f5baf1e-0e9b-4d85-b88a-d874dc4a3c42, symbol: V, venue_mic: XNYS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-11T16:58:00Z"
+  source: Alpaca paper GET /v2/assets/V (NYSE, status active)
+- kind: equity
+  identity: {instrument_id: "XNYS:MA", broker: alpaca, broker_asset_id: 2140998d-7f62-46f2-a9b2-e44350bd4807, symbol: MA, venue_mic: XNYS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-11T16:58:00Z"
+  source: Alpaca paper GET /v2/assets/MA (NYSE, status active)
+- kind: equity
+  identity: {instrument_id: "XNAS:COST", broker: alpaca, broker_asset_id: 1f888138-e413-4939-b16b-bdd08bb4debd, symbol: COST, venue_mic: XNAS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-11T16:58:00Z"
+  source: Alpaca paper GET /v2/assets/COST (NASDAQ, status active)
+- kind: equity
+  identity: {instrument_id: "XNAS:WMT", broker: alpaca, broker_asset_id: 3f3e0ff9-599f-4fec-8842-6bc53f5129a1, symbol: WMT, venue_mic: XNAS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-11T16:58:00Z"
+  source: Alpaca paper GET /v2/assets/WMT (NASDAQ, status active)
+- kind: equity
+  identity: {instrument_id: "XNYS:XOM", broker: alpaca, broker_asset_id: 0dd35bf7-a49c-4068-bce0-8e40b700454d, symbol: XOM, venue_mic: XNYS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-11T16:58:00Z"
+  source: Alpaca paper GET /v2/assets/XOM (NYSE, status active)
+- kind: equity
+  identity: {instrument_id: "XNYS:LLY", broker: alpaca, broker_asset_id: 87266a27-1b34-47bd-b236-bd3a9f59b138, symbol: LLY, venue_mic: XNYS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-11T16:58:00Z"
+  source: Alpaca paper GET /v2/assets/LLY (NYSE, status active)
+- kind: equity
+  identity: {instrument_id: "XNYS:UNH", broker: alpaca, broker_asset_id: 943bb7c3-0fb0-4088-9a37-62549b5dc528, symbol: UNH, venue_mic: XNYS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-11T16:58:00Z"
+  source: Alpaca paper GET /v2/assets/UNH (NYSE, status active)
+- kind: equity
+  identity: {instrument_id: "XNYS:ORCL", broker: alpaca, broker_asset_id: 27982558-2464-4daf-bb2f-b3b728659884, symbol: ORCL, venue_mic: XNYS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-11T16:58:00Z"
+  source: Alpaca paper GET /v2/assets/ORCL (NYSE, status active)
+- kind: equity
+  identity: {instrument_id: "XNYS:CRM", broker: alpaca, broker_asset_id: cf80d13f-470c-4947-8593-c5e098aeba4e, symbol: CRM, venue_mic: XNYS, currency: USD, product_type: ORDINARY_EQUITY, track: STOCKS}
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  tradable: true
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-11T16:58:00Z"
+  source: Alpaca paper GET /v2/assets/CRM (NYSE, status active)

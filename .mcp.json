@@ -1,0 +1,103 @@
+{
+  "mcpServers": {
+    "alpaca": {
+      "type": "stdio",
+      "command": "python",
+      "args": [
+        "-m",
+        "uv",
+        "run",
+        "--frozen",
+        "--quiet",
+        "python",
+        "-m",
+        "trader.config.secrets_exec",
+        "alpaca-paper",
+        "--",
+        "uvx",
+        "--quiet",
+        "alpaca-mcp-server==2.4.0"
+      ],
+      "env": {
+        "UV_SYSTEM_CERTS": "1",
+        "PYTHONUTF8": "1",
+        "ALPACA_PAPER_TRADE": "true"
+      }
+    },
+    "coingecko": {
+      "type": "http",
+      "url": "https://mcp.api.coingecko.com/mcp"
+    },
+    "alphavantage": {
+      "type": "stdio",
+      "command": "python",
+      "args": [
+        "-m",
+        "uv",
+        "run",
+        "--frozen",
+        "--quiet",
+        "python",
+        "-m",
+        "trader.config.secrets_exec",
+        "alphavantage",
+        "--",
+        "uvx",
+        "--quiet",
+        "--python",
+        "3.13",
+        "--from",
+        "marketdata-mcp-server==0.3.1",
+        "--with",
+        "mcp>=1.12.3,<2",
+        "marketdata-mcp"
+      ],
+      "env": {
+        "UV_SYSTEM_CERTS": "1",
+        "PYTHONUTF8": "1"
+      }
+    },
+    "twelvedata": {
+      "type": "http",
+      "url": "https://mcp.twelvedata.com/mcp"
+    },
+    "massive": {
+      "type": "http",
+      "url": "https://mcp.massive.com"
+    },
+    "kraken": {
+      "type": "stdio",
+      "command": "kraken-mcp",
+      "args": ["-s", "market,paper"]
+    },
+    "capital": {
+      "type": "stdio",
+      "command": "python",
+      "args": [
+        "-m",
+        "uv",
+        "run",
+        "--frozen",
+        "--quiet",
+        "python",
+        "-m",
+        "trader.config.secrets_exec",
+        "capital-demo",
+        "--",
+        "uvx",
+        "--quiet",
+        "--python",
+        "3.13",
+        "--from",
+        "git+https://github.com/capital-com-sv/capital-mcp@3207be418ac7d9f8b8b0aeedb0cdda19ef746e50",
+        "python",
+        "-m",
+        "capital_mcp.server"
+      ],
+      "env": {
+        "UV_SYSTEM_CERTS": "1",
+        "PYTHONUTF8": "1"
+      }
+    }
+  }
+}

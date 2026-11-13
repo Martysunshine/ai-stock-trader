@@ -1,0 +1,21 @@
+{
+  "manifest_version": 1,
+  "git_commit": null,
+  "policy_hash": null,
+  "strategy_versions": [],
+  "model_hashes": [],
+  "capability_profile": null,
+  "account_alias": null,
+  "gates": {
+    "G0": {"status": "NOT_RUN", "notes": "broker/economic feasibility: see docs/cost_feasibility.md and docs/broker_capabilities.md; critical items unknown"},
+    "G1": {"status": "NOT_RUN", "notes": "software integrity: replay invariant tests exist; paper fault tests not yet run (M4)"},
+    "G2": {"status": "FAILED", "evidence_refs": ["research/reports/baseline_report.md", "research/experiment_registry.jsonl"], "evaluated_at": "2026-11-07", "notes": "crypto_baseline_v1 (5 registered trials, BTC/ETH 15m, 2023-11..2026-08): every trial loses money after costs and none is positive before commissions; see research/reports/baseline_report.md. Stock baselines not yet run (no data access)."},
+    "G3": {"status": "NOT_RUN", "notes": "forward paper/shadow: no paper adapter yet (M4)"},
+    "G4": {"status": "NOT_RUN", "notes": "live pilot readiness: no owner-configured live account"}
+  },
+  "owner_enablement": {"enabled": false},
+  "outstanding_limitations": [
+    "G2 was evaluated for the crypto baselines and is NOT_PASSED; nothing here is evidence of profitability.",
+    "No live adapter is certified; live trading is impossible in this build."
+  ]
+}

@@ -1,0 +1,110 @@
+# Sized ETF dip-buy study: the frozen Candidate C rule (Connors and Alvarez 2008, RSI(2) dip in
+# an uptrend) on the same 13 US equity ETFs as T-0013, with the research-only sizing variant of
+# ADR-0041 (1% risk per trade, 2% total planned risk; every cap, reserve and loss limit as base).
+# Why: T-0013 lost 1.59 USD net on 55 trades at 0.25% risk, yet made 1.23 USD before fees. At
+# 0.25% risk (USD 0.125) and a 3 x ATR(10) stop a position is about USD 2-4, so the per-order
+# cent roundings of the pass-through fees were a large part of every trade. T-0015 showed the
+# same effect for the trend rule: -1.62 USD at 0.25% risk (T-0014) and +6.33 USD at 1% risk on
+# four funds. This study changes ONE thing against T-0013: the policy. The rule specification,
+# universe, data, windows, fills and fees are T-0013's, unchanged.
+# Everything below is fixed BEFORE the rule runs at this sizing on real data and is bound into
+# the trial's registration. Prepared 2026-11-10 on `sunshine`. Known before registration: the
+# T-0013 result above (same rule, same data, smaller positions). That makes this a second look
+# at the same data, which the selection correction counts (17 trials).
+study_id: etf_dip_sized_v1
+title: Daily ETF dip-buy with larger positions - Candidate C on 13 US equity ETFs at 1% risk per trade (daily SIP bars)
+track: STOCKS
+description: >-
+  The frozen Candidate C rule (Connors and Alvarez 2008: a 2-period RSI below 10 on a close above
+  the 200-session average, exit after the first close above the 5-session average, spec
+  candidate_c_etf_daily_v1) on the 13 US equity ETFs of T-0013, on a USD 50 ledger under
+  configs/policy/trend_sized_v1.yaml: the shared policy with 1% risk per trade and 2% total
+  planned risk instead of 0.25% and 0.5%. With the rule's 3 x ATR(10) disaster stop that sizes
+  most positions at the unchanged USD 10 symbol cap. Gross exposure stays capped at 40% with a
+  USD 30 cash reserve and at most two open positions. Same Alpaca SIP daily bars, next-open fills
+  and pass-through fees as etf_daily_v1.
+price_dataset: alpaca_us_etfs_daily_sip_v1
+basis_datasets: []
+instruments:
+  - {price_instrument_id: "ARCX:SPY", execution_instrument_id: "ARCX:SPY"}
+  - {price_instrument_id: "XNAS:QQQ", execution_instrument_id: "XNAS:QQQ"}
+  - {price_instrument_id: "ARCX:IWM", execution_instrument_id: "ARCX:IWM"}
+  - {price_instrument_id: "ARCX:DIA", execution_instrument_id: "ARCX:DIA"}
+  - {price_instrument_id: "ARCX:XLB", execution_instrument_id: "ARCX:XLB"}
+  - {price_instrument_id: "ARCX:XLE", execution_instrument_id: "ARCX:XLE"}
+  - {price_instrument_id: "ARCX:XLF", execution_instrument_id: "ARCX:XLF"}
+  - {price_instrument_id: "ARCX:XLI", execution_instrument_id: "ARCX:XLI"}
+  - {price_instrument_id: "ARCX:XLK", execution_instrument_id: "ARCX:XLK"}
+  - {price_instrument_id: "ARCX:XLP", execution_instrument_id: "ARCX:XLP"}
+  - {price_instrument_id: "ARCX:XLU", execution_instrument_id: "ARCX:XLU"}
+  - {price_instrument_id: "ARCX:XLV", execution_instrument_id: "ARCX:XLV"}
+  - {price_instrument_id: "ARCX:XLY", execution_instrument_id: "ARCX:XLY"}
+instrument_specs: configs/instruments/etfs_research.yaml
+fee_schedule: configs/fees/alpaca_us_equities_v2.yaml
+# The research-only variant of ADR-0041, as T-0015 and T-0016. It is the only difference from
+# T-0013 (configs/policy/base.yaml).
+policy: configs/policy/trend_sized_v1.yaml
+fills:
+  label: base
+  half_spread_bps: "1.0"   # as etf_daily_v1
+  slippage_bps: "1.0"      # as etf_daily_v1
+  participation: "0.10"
+  latency_ms: 500          # irrelevant for next-open orders
+stress:
+  multiplier: "2"
+  missed_entry_percent: 5
+loss_windows: [NY_SESSION, NY_WEEK, UTC_DAY, UTC_WEEK]
+session_basis: XNYS
+annualisation_sessions: 252
+warmup_sessions: 260
+splits:   # as etf_daily_v1, unchanged
+  development_start: "2017-02-01T00:00:00Z"
+  holdout_start: "2026-08-01T00:00:00Z"
+  holdout_end: "2026-11-01T00:00:00Z"
+  walk_forward: {train_months: 12, validation_months: 3, test_months: 3, step_months: 3}
+  embargo_minutes: 0
+operating_costs_usd_per_month: "0.00"
+diagnostic_capitals: ["1000"]
+bootstrap:
+  replicates: 2000
+  mean_block_sessions: "5"
+  seed: 20261107
+universe_selection: >-
+  The 13 US equity ETFs of T-0013, unchanged: SPY, QQQ, IWM, DIA and the nine original Select
+  Sector SPDRs (XLB, XLE, XLF, XLI, XLK, XLP, XLU, XLV, XLY). No fund was added or removed after
+  seeing T-0013's result; keeping the universe is what makes the policy the only change. Today's
+  list applied to past history, with the small survivorship bias described in etf_daily_v1. The
+  funds overlap heavily, and dips arrive together: exposure tags cap SPY, QQQ, IWM and DIA
+  together at the USD 10 symbol cap (US_EQUITY_INDEX), sector funds are untagged, and at most two
+  positions are open. When several funds signal at the same close, the first in instrument-id
+  order is taken.
+horizon: >-
+  Daily bars, one per XNYS regular session, with multi-day holds carried overnight. T-0017
+  decides on every completed session's close and holds until the first close above SMA(5), which
+  sells at the next open, for at most 10 sessions, with a 3 x ATR(10) disaster stop. Each
+  three-month window is an independent deployment from USD 50 (ADR-0020); a position open at a
+  window end is closed at the last close's estimated bid (END_OF_DATA). Loss windows: NY session
+  and week, UTC day and week; a breached day or week resumes at the next one, a 10% drawdown or
+  the USD 45 floor stops new entries for the rest of the window.
+entry_exit_timing: >-
+  As T-0013 in etf_daily_v1: decision at a completed daily close (+1 s); a next-open marketable
+  buy limit at the estimated ask plus 5 bps, filled only at the next session's open plus the
+  assumed half-spread and slippage, so an open more than about 3 bps above the signal close
+  misses the entry; the exit signal (a close above SMA(5)) and the time exit sell at the next
+  open; the disaster stop rests for the whole hold and an open through it sells at that open;
+  the target (SMA(5) at the signal) is only a cost-coverage gate, never an exit. Larger positions
+  do not change fills: USD 10 orders stay far below the 10% participation cap on these funds.
+  With larger positions the cost gate admits more signals than at T-0013's sizes, because the
+  per-order cent roundings are a smaller fraction of the planned gain; the trade count is
+  therefore expected to differ from T-0013's 55.
+trials:
+  - trial_id: T-0017
+    spec_file: src/trader/strategies/specs/candidate_c_etf_daily_v1.yaml
+    instruments: [ARCX:SPY, XNAS:QQQ, ARCX:IWM, ARCX:DIA, ARCX:XLB, ARCX:XLE, ARCX:XLF, ARCX:XLI,
+                  ARCX:XLK, ARCX:XLP, ARCX:XLU, ARCX:XLV, ARCX:XLY]
+    hypothesis: >-
+      On the 13 US equity ETFs, the Connors and Alvarez (2008) RSI(2) dip-buy rule of T-0013,
+      sized at 1% risk per trade (positions near the USD 10 symbol cap) instead of 0.25%, earns
+      positive net expectancy after Alpaca's pass-through fees, the assumed spread and slippage,
+      measured in independent three-month deployments from USD 50; the larger positions make the
+      per-order cent roundings a small fraction of each trade.

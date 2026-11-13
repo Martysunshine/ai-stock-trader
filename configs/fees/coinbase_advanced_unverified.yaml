@@ -1,0 +1,12 @@
+# Coinbase Advanced spot fees: UNVERIFIED (checked 2026-11-07). The official fee page could not be
+# read automatically, and third-party reports for the lowest tier conflict (0.40/0.60%,
+# 0.50/0.90% after a reported September 2026 restructuring, 0.60/1.20% "Intro 1"). Unknown fees
+# mean NO_TRADE, never zero fees; the owner must confirm the account's actual tier before use.
+schedule_id: coinbase-advanced-spot-unverified-2026-11-07
+description: Coinbase Advanced spot fees (unverified; conflicting public reports)
+evidence: UNKNOWN
+known: false
+source: https://help.coinbase.com/en/coinbase/trading-and-funding/advanced-trade/advanced-trade-fees
+as_of: "2026-11-07"
+currency: USD
+notes: conflicting third-party figures; confirm in the account before any use

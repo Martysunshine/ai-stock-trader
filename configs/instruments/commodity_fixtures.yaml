@@ -1,0 +1,53 @@
+# HYPOTHETICAL sizing fixtures from COMMODITIES_AND_CFD_TRACK.md section 5 - not market quotes
+# and not broker metadata. Gold: USD 4,000/oz reference, smallest position 0.1 oz, 20:1 margin.
+# The silver fixture uses its own units (do not copy gold sizing).
+- kind: commodity
+  identity: {instrument_id: "CFDFIX:XAUUSD", broker: cfd_fixture, broker_asset_id: fixture-gold, symbol: XAUUSD, currency: USD, product_type: CFD, track: COMMODITIES}
+  underlying: GOLD
+  quantity_unit: troy_ounce
+  quantity_step: "0.1"
+  min_quantity: "0.1"
+  min_notional: "0"
+  price_tick: "0.01"
+  contract_multiplier: "1"
+  price_scale: "1"
+  exposure_tags: [GOLD]
+  allowed_directions: [LONG, SHORT]
+  fractionable: true
+  evidence: REPLAY_SIMULATED
+  as_of: "2026-11-06T00:00:00Z"
+  source: COMMODITIES_AND_CFD_TRACK.md section 5 hypothetical fixture
+  margin: {initial_margin_fraction: "0.05", maintenance_margin_fraction: "0.025", netting_mode: UNKNOWN}
+  financing:
+    long_daily_charge_fraction: "0.0002"
+    short_daily_charge_fraction: "0.0001"
+    charge_time_utc: "22:00"
+    as_of: "2026-11-06T00:00:00Z"
+    source: hypothetical
+  certification_examples:
+    - {direction: LONG, quantity: "0.1", entry_price: "4000.00", exit_price: "4010.00", statement_pnl_quote: "1.00", source: hypothetical statement}
+- kind: commodity
+  identity: {instrument_id: "CFDFIX:XAGUSD", broker: cfd_fixture, broker_asset_id: fixture-silver, symbol: XAGUSD, currency: USD, product_type: CFD, track: COMMODITIES}
+  underlying: SILVER
+  quantity_unit: troy_ounce
+  quantity_step: "1"
+  min_quantity: "1"
+  min_notional: "0"
+  price_tick: "0.001"
+  contract_multiplier: "1"
+  price_scale: "1"
+  exposure_tags: [SILVER]
+  allowed_directions: [LONG, SHORT]
+  fractionable: false
+  evidence: REPLAY_SIMULATED
+  as_of: "2026-11-06T00:00:00Z"
+  source: hypothetical silver fixture (own units)
+  margin: {initial_margin_fraction: "0.10", maintenance_margin_fraction: "0.05", netting_mode: UNKNOWN}
+  financing:
+    long_daily_charge_fraction: "0.0002"
+    short_daily_charge_fraction: "0.0001"
+    charge_time_utc: "22:00"
+    as_of: "2026-11-06T00:00:00Z"
+    source: hypothetical
+  certification_examples:
+    - {direction: SHORT, quantity: "2", entry_price: "50.000", exit_price: "49.500", statement_pnl_quote: "1.000", source: hypothetical statement}

@@ -1,0 +1,22 @@
+# Normalise everything to LF in the repository.
+* text=auto eol=lf
+
+# Protected specification files: never let git touch their bytes (no EOL conversion,
+# no diff filters). Their SHA-256 values are pinned in docs/protected_spec_hashes.sha256
+# and verified by tests/test_protected_specs.py.
+README.md -text
+docs/specs/instructions.md -text
+docs/specs/architecture.md -text
+docs/specs/implementation_roadmap.md -text
+docs/specs/risk_and_validation.md -text
+docs/specs/strategy_and_profitability.md -text
+docs/specs/markets_and_brokers.md -text
+docs/specs/repositories_and_sources.md -text
+docs/specs/CRYPTO_TRADING_TRACK.md -text
+docs/specs/COMMODITIES_AND_CFD_TRACK.md -text
+
+# Generated research fixtures are compared by checksum.
+research/sessions/**/*.jsonl -text
+
+*.png binary
+*.parquet binary

@@ -1,0 +1,68 @@
+# Weekly momentum on Capital.com crypto CFDs, long and short (ADR-0052, trial T-0019). Fixed in
+# the decision record before any result existed; registered before it is run.
+kind: cfd_study
+study_id: cfd_crypto_momentum_v1
+title: Weekly momentum on crypto CFDs - long or short Bitcoin and Ether by the sign of the week
+track: COMMODITIES
+description: >-
+  Time-series momentum over one week on the Bitcoin and Ether CFDs, traded as the crypto
+  practice sleeve would: USD 100 per window, at most 1% of equity at the stop, one crypto trade
+  at a time, total notional at most equity, fills on the broker's own bid and ask, overnight
+  financing charged each night (a short is paid where the broker pays).
+quote_dataset: capital_demo_crypto_cfd_1h_v1
+bars: {source_minutes: 60, calendar: UTC_24_7, closed_run_max_weekdays: 0}
+instruments:
+  - {instrument_id: "CAPITAL:BTCUSD"}
+  - {instrument_id: "CAPITAL:ETHUSD"}
+instrument_specs: configs/instruments/capital_demo_cfds_v1.yaml
+fee_schedule: configs/fees/capital_com_cfd_demo_v1.yaml
+policy: configs/policy/crypto_cfd_sleeve_v1.yaml
+costs:
+  slippage_bps: "1"
+  # today's median quoted spread (hourly dataset, 2026): a bar quoting less is not believed
+  spread_floor_bps: {"CAPITAL:BTCUSD": "6.8", "CAPITAL:ETHUSD": "8.1"}
+stress:
+  spread_multiplier: "2"
+  slippage_multiplier: "2"
+  financing_charge_multiplier: "1.5"
+  financing_credits: false
+  missed_entry_percent: 5
+warmup_days: 30
+splits:
+  development_start: "2018-03-01T00:00:00Z"
+  holdout_start: "2026-08-01T00:00:00Z"
+  holdout_end: "2026-11-01T00:00:00Z"
+  walk_forward: {train_months: 12, validation_months: 3, test_months: 3, step_months: 3}
+  embargo_minutes: 0
+bootstrap:
+  replicates: 2000
+  mean_block_sessions: "5"
+  seed: 20261112
+annualisation_sessions: 365
+universe_selection: >-
+  The two crypto CFDs the crypto practice sleeve may trade (ADR-0049), Bitcoin and Ether, chosen
+  before any result; they move together, so one trade is open at a time.
+horizon: >-
+  Daily bars, one per UTC day built from the broker's hourly bid and ask. A position is decided
+  each Sunday bar (closing Monday 00:00 UTC) and held for one week at most, with a stop 3 x
+  ATR(10) from the close and a target twice that distance. Three-month windows from USD 100,
+  each an independent deployment.
+entry_exit_timing: >-
+  Decision on the Sunday bar's close (Monday 00:00 UTC); a market order at the next open, buying
+  the ask or selling the bid with 1 bp of slippage, sized at that price; refused when the open
+  is beyond the stop or the quoted spread is above 60 bps. Stops and targets are checked inside
+  each bar on the side that would fill; the time exit closes at the open one week after the
+  entry, before that open's new entry. Financing is charged at 22:00 UTC every night.
+known_before_registration: >-
+  No momentum rule has been run on these instruments in this project. The monthly trend rule
+  T-0016 ran on Coinbase BTC and ETH spot (long only, monthly). The quality reports of the
+  Capital.com datasets were read before the periods were fixed (ADR-0052).
+trials:
+  - trial_id: T-0019
+    spec_file: src/trader/strategies/specs/cfd_crypto_weekly_momentum_v1.yaml
+    hypothesis: >-
+      On Capital.com's Bitcoin and Ether CFDs, holding for one week in the direction of the past
+      week's return (long when it rose, short when it fell) earns a positive net result after the
+      quoted spread, slippage and overnight financing, sized as the crypto practice sleeve (1% of
+      USD 100 at the stop, one crypto trade at a time), over 2018-2026 in independent three-month
+      deployments.

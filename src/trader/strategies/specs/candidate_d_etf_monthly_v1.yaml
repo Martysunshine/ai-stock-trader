@@ -1,0 +1,72 @@
+# Candidate D - trend timing on month-end closes for a 16-ETF basket.
+# Source: Mebane T. Faber, "A Quantitative Approach to Tactical Asset Allocation",
+# The Journal of Wealth Management 9(4), Spring 2007, pp. 69-79 (SSRN 962461). Published rule:
+# at each month end, hold an asset while its monthly close is above its 10-month simple moving
+# average; move to cash when the monthly close is below it.
+# FROZEN SPECIFICATION (src/trader/strategies/trend_timing.py). The 10-month average is the
+# publication's parameter. The disaster stop, the target, the time exit and the execution
+# fields below are risk plumbing that the USD 50 policy needs; they were fixed before any data
+# was seen and were not tuned on any data. Any change is a new research trial.
+# - Evaluated only on a month-end session's completed close: the last XNYS session of the month
+#   (from the exchange calendar; holidays and early closes included).
+# - Entry: month-end close > SMA of the last 10 month-end closes (the current one included) ->
+#   long candidate, filled at the next session's open when flat (holding: OVERNIGHT). While the
+#   instrument is held, the candidate is rejected instrument_busy, which means "keep holding".
+# - Exit signal: month-end close < that SMA -> sell at the next open.
+# - Disaster stop: signal close - 4 x Wilder ATR(20) of daily bars (sizes the position, rests for
+#   the whole hold).
+# - Target: signal close + 3 x (signal close - stop); a resting exit (target_role: EXIT) that
+#   truncates rare outsized runs and is the cost-coverage gate of ADR-0019.
+# - Time exit: 260 exchange sessions after the entry session (about one year); the next month end
+#   above the SMA re-enters.
+# - A missing session resets the features: no entry until 10 new month ends have passed, and a
+#   held position is sold after the next month end (MONTHLY_SMA_UNAVAILABLE, fail closed).
+# - Execution: the next-open order is a marketable limit 100 bps (1%) above the estimated ask,
+#   i.e. a market-on-open order with a 1% collar, so ordinary opening gaps fill and a gap above
+#   1% is not chased (re-entry at the next month end). Sizing uses that limit as the entry price.
+#   The gap allowance is the policy floor (10 bps); overnight gaps through the stop are filled at
+#   the open by the engine (STOP_GAP), not assumed away.
+# Study requirement: warmup_sessions >= 230 (ten month ends need at most 23 x 10 sessions).
+# Deviations from the publication (disclosed in the decision record): next-open instead of
+# month-end-close execution; cash earns nothing; raw prices, so distributions are neither
+# credited nor adjusted; position sizes come from the risk policy (0.25% risk per trade, at most
+# 2 open positions, one new entry per session, first in instrument-id order) instead of equal
+# weights; the stop, target and time exit are additions.
+strategy_id: candidate_d_etf_trend_timing
+version: 1
+family: CANDIDATE_D
+track: STOCKS
+feature_version: daily-v1
+source: >-
+  Faber, M. T. (2007). A Quantitative Approach to Tactical Asset Allocation. The Journal of
+  Wealth Management 9(4), 69-79. SSRN 962461. Rule: monthly close above the 10-month simple
+  moving average -> invested; below -> cash.
+universe:
+  - ARCX:SPY
+  - XNAS:QQQ
+  - ARCX:IWM
+  - ARCX:DIA
+  - ARCX:XLB
+  - ARCX:XLE
+  - ARCX:XLF
+  - ARCX:XLI
+  - ARCX:XLK
+  - ARCX:XLP
+  - ARCX:XLU
+  - ARCX:XLV
+  - ARCX:XLY
+  - XNAS:TLT
+  - XNAS:IEF
+  - ARCX:GLD
+holding: OVERNIGHT
+max_hold_sessions: 260
+target_role: EXIT
+use_source_vwap: false
+month_end_sma_months: 10
+atr_period_sessions: 20
+stop_atr_multiplier: "4"
+target_risk_multiple: "3"
+entry_limit_offset_bps: "100"
+entry_ttl_seconds: 120
+gap_allowance_bps: "10"
+research_status: UNVALIDATED - frozen rule; evaluated only through registered trials

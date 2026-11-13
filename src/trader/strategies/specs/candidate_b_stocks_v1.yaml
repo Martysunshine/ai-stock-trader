@@ -1,0 +1,32 @@
+# Candidate B - controlled mean reversion for US equities (strategy_and_profitability.md section 5).
+# FROZEN SPECIFICATION. Completed five-minute bars inside the calendar-relative entry window;
+# reference = same-feed session VWAP (requires a source VWAP; refuses datasets without one).
+# Entry needs a close >= 2 ATR(6) below the session VWAP, efficiency ratio over one hour <= 0.30,
+# ATR(6)/ATR(12) <= 1.5 and a stabilising bar. Stop 1.5 ATR, target = VWAP, hold <= 60 minutes.
+# No identified company event is required by the specification; without a point-in-time
+# earnings calendar this cannot be enforced and reports must disclose it.
+strategy_id: candidate_b_stocks_meanrev
+version: 1
+family: CANDIDATE_B
+track: STOCKS
+feature_version: streaming-v1
+window_mode: SESSION
+decision_bar_minutes: 5
+context_bar_minutes: 15
+context_lookback_bars: 1
+reference_window_bars: null
+use_source_vwap: true
+atr_period_bars: 6
+long_atr_period_bars: 12
+efficiency_window_bars: 12
+breakout_lookback_bars: 6
+max_hold_minutes: 60
+entry_limit_offset_bps: "5"
+entry_ttl_seconds: 120
+candidate_ttl_seconds: 60
+gap_allowance_bps: "10"
+entry_deviation_atr: "2.0"
+max_efficiency_ratio: "0.30"
+max_volatility_ratio: "1.5"
+stop_atr_multiplier: "1.5"
+research_status: UNVALIDATED - frozen rule; no stock history has been acquired yet

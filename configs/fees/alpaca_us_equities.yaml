@@ -1,0 +1,12 @@
+# Alpaca US equities for the intended account: commission and regulatory pass-through
+# treatment for fractional orders are NOT verified in this project. Unknown costs mean no trade.
+# Re-checked 2026-11-07: the fractional page says fractional fees "work the same way as with whole
+# shares"; the brokerage fee schedule (updated 2026-09-17) has a pass-through regulatory fee section
+# whose amounts and rounding could not be extracted automatically. Verify manually before M4.
+schedule_id: alpaca-us-equities-unverified
+description: Alpaca US equities - unverified for the intended account
+evidence: UNKNOWN
+known: false
+source: docs/cost_feasibility.md (open item)
+as_of: "2026-11-07"
+currency: USD

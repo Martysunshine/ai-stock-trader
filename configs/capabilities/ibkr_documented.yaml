@@ -1,0 +1,30 @@
+# Interactive Brokers - assess, do not presume (markets_and_brokers.md section 3). Official
+# material is inconsistent about fractional API orders; every fractional API capability is UNKNOWN.
+broker: ibkr
+environment: paper
+profile_version: ibkr-documented-2026-10-13
+as_of: "2026-10-13T00:00:00Z"
+account_legal_type: UNKNOWN
+rule_profile: UNVERIFIED
+cash_availability: UNKNOWN
+market_data_feed: UNKNOWN
+market_data_consolidated: false
+fee_schedule_id: ibkr-us-fractional-2026-10-13
+capabilities:
+  fractional.market.day:
+    supported: null
+    evidence: UNKNOWN
+    source: https://www.interactivebrokers.com/campus/?p=195739&post_type=ibkr-api-page
+    notes: API order-types page and TWS error-code reference conflict
+  fractional.limit.day:
+    supported: null
+    evidence: UNKNOWN
+    source: https://www.interactivebrokers.com/docs/tws-api/doc/error-handling/error-codes
+  native_protective_stop:
+    supported: null
+    evidence: UNKNOWN
+    source: fractional protection unverified
+  client_order_id_unique:
+    supported: null
+    evidence: UNKNOWN
+    source: not assessed

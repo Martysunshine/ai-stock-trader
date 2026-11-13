@@ -1,0 +1,470 @@
+.shell {
+  display: grid;
+  grid-template-columns: 232px minmax(0, 1fr) auto;
+  min-height: 100%;
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  padding: var(--s-5) var(--s-3) var(--s-4);
+  border-right: 0.5px solid var(--hairline);
+  background: var(--bg);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 var(--s-2) var(--s-5);
+}
+
+.brandMark {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  flex: none;
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.brandName {
+  font-weight: 650;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+}
+
+.brandSub {
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.navItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 36px;
+  padding: 0 10px;
+  border-radius: var(--r-control);
+  color: var(--ink-2);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none !important;
+  transition: color var(--t-fast) var(--ease-out);
+}
+
+.navItem:hover {
+  color: var(--ink);
+}
+
+.navActive {
+  color: var(--ink);
+}
+
+.navThumb {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r-control);
+  background: var(--fill);
+  z-index: -1;
+}
+
+.navGroup {
+  margin: 20px 12px 6px;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.navGroup:first-child {
+  margin-top: 2px;
+}
+
+.navDivider {
+  height: 0.5px;
+  background: var(--hairline-strong);
+  margin: 8px 10px;
+}
+
+.navBadge {
+  margin-left: auto;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--critical);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.sideFoot {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-2) 0;
+}
+
+.sideRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+  font-size: 12px;
+  color: var(--ink-3);
+}
+
+.attribution {
+  font-size: 11px;
+  color: var(--ink-3);
+  line-height: 1.4;
+}
+
+.attribution a {
+  color: var(--ink-3);
+  text-decoration: underline;
+}
+
+.main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  /* Pages lay out against the space they actually get (the Activity panel can take 380 px). */
+  container: main / inline-size;
+}
+
+
+.strip {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-height: 60px;
+  padding: 10px var(--s-6);
+  background: var(--glass);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 0.5px solid var(--hairline);
+  flex-wrap: wrap;
+}
+
+.stripGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-width: 0;
+}
+
+.stripRight {
+  margin-left: auto;
+}
+
+.clock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+.clockMain {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.clockSub {
+  font-size: 11px;
+  color: var(--ink-3);
+}
+
+.select {
+  appearance: none;
+  border: 0;
+  background: var(--fill);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  height: 30px;
+  padding: 0 28px 0 12px;
+  border-radius: 9px;
+  cursor: pointer;
+  background-image: linear-gradient(45deg, transparent 50%, var(--ink-2) 50%), linear-gradient(135deg, var(--ink-2) 50%, transparent 50%);
+  background-position: calc(100% - 15px) 13px, calc(100% - 10px) 13px;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--accent-ink);
+  background: var(--accent-wash);
+  white-space: nowrap;
+}
+
+.transport {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 32px;
+  padding: 0 10px 0 3px;
+  border-radius: 999px;
+  background: var(--fill);
+}
+
+.transportButton {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background var(--t-fast) var(--ease-out);
+}
+
+.transportButton:hover {
+  background: var(--fill-strong);
+}
+
+.transportTime {
+  margin-left: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.transportOf {
+  color: var(--ink-3);
+  font-weight: 500;
+}
+
+.activityButton {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 30px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--fill);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--t-fast) var(--ease-out), color var(--t-fast) var(--ease-out);
+}
+
+.activityButton:hover {
+  background: var(--fill-strong);
+}
+
+.activityButtonOn {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.activityButtonOn:hover {
+  background: var(--ink);
+}
+
+.unread {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 10.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.scrub {
+  position: relative;
+  height: 3px;
+  background: var(--fill);
+  cursor: pointer;
+}
+
+.scrub:hover {
+  height: 5px;
+}
+
+.scrubFill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--accent);
+}
+
+.scrubTick {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 2px;
+  border-radius: 1px;
+  background: var(--ink-3);
+  opacity: 0.6;
+}
+
+.page {
+  padding: var(--s-6) var(--s-6) var(--s-7);
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.palette {
+  position: fixed;
+  top: 14vh;
+  left: 50%;
+  width: min(620px, calc(100vw - 32px));
+  transform: translateX(-50%);
+  background: var(--surface);
+  border-radius: 16px;
+  box-shadow: var(--shadow-float), inset 0 0 0 0.5px var(--hairline);
+  z-index: 60;
+  overflow: hidden;
+}
+
+.paletteInput {
+  width: 100%;
+  border: 0;
+  border-bottom: 0.5px solid var(--hairline);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 17px;
+  padding: 16px 20px;
+  outline: none;
+}
+
+.paletteList {
+  max-height: 46vh;
+  overflow-y: auto;
+  padding: 6px;
+}
+
+.paletteItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.paletteItemActive {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.paletteHint {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.kbd {
+  font-size: 11px;
+  color: var(--ink-3);
+  border: 0.5px solid var(--hairline-strong);
+  border-radius: 5px;
+  padding: 1px 5px;
+}
+
+@media (max-width: 900px) {
+  .shell {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    position: static;
+    height: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    border-right: 0;
+    border-bottom: 0.5px solid var(--hairline);
+    padding: var(--s-3) var(--s-4);
+  }
+  .brand {
+    padding: 0;
+  }
+  .nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .sideFoot {
+    display: none;
+  }
+  .strip,
+  .page {
+    padding-left: var(--s-4);
+    padding-right: var(--s-4);
+  }
+}
+
+/* Narrow main column (Activity panel open, small windows). Kept last so it wins over base rules. */
+.stripGroup {
+  flex-wrap: wrap;
+}
+
+@container main (max-width: 1000px) {
+  .clockSub,
+  .badge,
+  .activityLabel {
+    display: none;
+  }
+  .clockMain .clockDate {
+    display: none;
+  }
+  .strip {
+    padding-left: var(--s-5);
+    padding-right: var(--s-5);
+  }
+}
+
+@container main (max-width: 900px) {
+  .page {
+    padding-left: var(--s-5);
+    padding-right: var(--s-5);
+  }
+}

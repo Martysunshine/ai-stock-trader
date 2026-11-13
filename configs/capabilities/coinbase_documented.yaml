@@ -1,0 +1,25 @@
+# Coinbase Advanced Trade - alternative crypto candidate. Its sandbox returns static mocked
+# responses, so it cannot demonstrate fills (CRYPTO_TRADING_TRACK.md section 7).
+broker: coinbase_advanced
+environment: paper
+profile_version: coinbase-documented-2026-11-06
+as_of: "2026-11-06T00:00:00Z"
+account_legal_type: CRYPTO_SPOT
+rule_profile: UNVERIFIED
+cash_availability: UNKNOWN
+market_data_feed: COINBASE_PUBLIC
+market_data_consolidated: false
+fee_schedule_id: unknown
+capabilities:
+  spot.limit:
+    supported: null
+    evidence: UNKNOWN
+    source: not assessed in detail
+  native_protective_stop:
+    supported: null
+    evidence: UNKNOWN
+    source: not assessed
+  sandbox_matching:
+    supported: false
+    evidence: DOCUMENTED
+    source: https://docs.cdp.coinbase.com/coinbase-app/advanced-trade-apis/sandbox

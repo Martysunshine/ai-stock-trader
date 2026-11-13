@@ -1,0 +1,17 @@
+# CRYPTO_TRADING_TRACK.md §6: Kraken Pro public Tier 1 spot table at research check -
+# 0.40% maker / 0.80% taker before discounts. Must be fetched per account (TradeVolume
+# endpoint) before any trade; this snapshot is for feasibility arithmetic only.
+schedule_id: kraken-pro-spot-tier1-2026-11-06
+description: Kraken Pro spot Tier 1 maker/taker (public table snapshot)
+evidence: DOCUMENTED
+known: true
+source: https://www.kraken.com/pro/fees
+as_of: "2026-11-06"
+currency: EUR
+default_liquidity: TAKER
+components:
+  - type: maker_taker
+    sides: [BUY, SELL]
+    maker_rate: "0.0040"
+    taker_rate: "0.0080"
+    granularity: "0.0001"

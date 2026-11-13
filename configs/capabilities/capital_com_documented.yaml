@@ -1,0 +1,33 @@
+# Capital.com CFD API - first demo-adapter candidate (COMMODITIES_AND_CFD_TRACK.md sections 3, 8).
+# Demo and live are separate environments; a dealReference must be resolved via confirmation.
+broker: capital_com
+environment: demo
+profile_version: capital-com-documented-2026-11-06
+as_of: "2026-11-06T00:00:00Z"
+account_legal_type: CFD
+rule_profile: UNVERIFIED
+cash_availability: UNKNOWN
+market_data_feed: CAPITAL_COM
+market_data_consolidated: false
+fee_schedule_id: unknown
+capabilities:
+  cfd.open_position:
+    supported: true
+    evidence: DOCUMENTED
+    source: https://open-api.capital.com/
+  cfd.close_by_deal_id:
+    supported: true
+    evidence: DOCUMENTED
+    source: https://open-api.capital.com/
+  cfd.deal_confirmation:
+    supported: true
+    evidence: DOCUMENTED
+    source: https://open-api.capital.com/
+  native_protective_stop:
+    supported: null
+    evidence: UNKNOWN
+    source: stop levels are documented; minimum distance and exact-size behaviour uncertified
+  client_order_id_unique:
+    supported: null
+    evidence: UNKNOWN
+    source: idempotency semantics not certified

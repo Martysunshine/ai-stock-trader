@@ -1,0 +1,195 @@
+/* Trade story page and the all-sleeves trade tables. */
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-2);
+  text-decoration: none;
+}
+
+.back:hover {
+  color: var(--ink);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-left: 14px;
+  border-left: 3px solid var(--sleeve);
+}
+
+.emblem {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+.headMain {
+  flex: 1;
+  min-width: 0;
+}
+
+.headResult {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.result {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.rMultiple {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+
+.thesis {
+  margin: 0 0 12px;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.lesson {
+  margin: 0 0 10px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.muted {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--ink-2);
+}
+
+.more {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-ink);
+  text-decoration: none;
+}
+
+/* ------------------------------------------------------------------ timeline */
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.event {
+  position: relative;
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 10px;
+  padding-bottom: 14px;
+}
+
+.event:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 14px;
+  bottom: 0;
+  width: 1px;
+  background: var(--hairline-strong);
+}
+
+.eventDot {
+  padding-top: 5px;
+}
+
+.eventHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.eventWhen {
+  flex: none;
+  font-size: 12px;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.eventDetail {
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--ink-2);
+  line-height: 1.4;
+}
+
+/* ------------------------------------------------------------------ trade tables (Money page) */
+.sleeveCell {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.sleeveCell img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+.sleeveDot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.rowLink {
+  cursor: pointer;
+  transition: background 120ms var(--ease-out);
+}
+
+.rowLink:hover,
+.rowLink:focus-visible {
+  background: var(--fill);
+  outline: none;
+}
+
+.totalRow td {
+  font-weight: 650;
+  border-top: 0.5px solid var(--hairline-strong);
+}
+
+.sectionTitle {
+  margin: 10px 0 0;
+  font-size: 17px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.sectionSub {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+@media (max-width: 760px) {
+  .head {
+    flex-wrap: wrap;
+  }
+  .headResult {
+    align-items: flex-start;
+  }
+}

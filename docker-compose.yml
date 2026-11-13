@@ -1,0 +1,26 @@
+# Local development database only. Bound to 127.0.0.1; never expose it.
+# Credentials come from .env (gitignored). Copy .env.example to .env first.
+services:
+  postgres:
+    # Official Docker Hub "postgres" library image, pulled through Google's public Docker Hub
+    # mirror (direct Docker Hub CDN downloads are interrupted by HTTPS scanning on the dev host).
+    image: mirror.gcr.io/library/postgres:16-alpine
+    container_name: ai-stock-trader-pg
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${TRADER_PG_USER:-trader}
+      POSTGRES_PASSWORD: ${TRADER_PG_PASSWORD:?set TRADER_PG_PASSWORD in .env}
+      POSTGRES_DB: ${TRADER_PG_DB:-trader}
+    ports:
+      - "127.0.0.1:${TRADER_PG_PORT:-5433}:5432"
+    volumes:
+      - trader_pg_data:/var/lib/postgresql/data
+      - ./deploy/postgres-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  trader_pg_data:

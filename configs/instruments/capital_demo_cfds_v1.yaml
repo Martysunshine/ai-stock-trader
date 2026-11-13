@@ -1,0 +1,282 @@
+# Capital.com DEMO CFDs for research studies (ADR-0052), read from the demo API on 2026-11-10
+# (`/markets`: dealingRules, marginFactor, overnightFee). DOCUMENTED evidence: the broker's own
+# metadata, not yet checked against a demo statement (no certification example), so no runtime
+# component may trade from this file; the CFD study engine sizes and costs simulated trades with it.
+#
+# * Every epic is a `kind: commodity` CFD on the COMMODITIES track, whatever its underlying: the
+#   domain model has one CFD contract type (COMMODITIES_AND_CFD_TRACK.md section 5), and the track
+#   profile allows LONG and SHORT in replay. Index, FX and crypto CFDs are not in a spec track;
+#   ADR-0052 records that this file is research-only.
+# * One contract is one unit of the quoted price (contract_multiplier 1): a US500 size of 0.01 at
+#   7,500 is USD 75 of notional, as the demo's position previews show.
+# * financing: `overnightFee` is quoted in percent per night as the cash flow to the client, so the
+#   fraction here is minus that rate over 100 (positive = a charge). Charged at 22:00 UTC
+#   (swapChargeTimestamp). Markets closed at the weekend charge the Friday night three times
+#   (weekend_multiplier_days 3; the broker states no weekday, and FX conventionally triples on
+#   Wednesday: the weekly total is the same). Crypto CFDs trade every day and are charged each
+#   night (1). The rates are today's and are applied to every year of a study: a stated limit.
+# * exposure_tags are the correlation groups: one open trade per tag in the CFD study.
+- kind: commodity
+  identity: {instrument_id: "CAPITAL:GOLD", broker: capital_com_demo, broker_asset_id: GOLD, symbol: GOLD, currency: USD, product_type: CFD, track: COMMODITIES}
+  underlying: Gold
+  quantity_unit: contract
+  quantity_step: "0.01"
+  min_quantity: "0.01"
+  min_notional: "0"
+  price_tick: "0.01"
+  contract_multiplier: "1"
+  price_scale: "1"
+  exposure_tags: [GOLD]
+  allowed_directions: [LONG, SHORT]
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-10T21:22:00Z"
+  source: Capital.com demo API /markets GOLD, read 2026-11-10
+  margin: {initial_margin_fraction: "0.05", maintenance_margin_fraction: "0.025", netting_mode: UNKNOWN}
+  financing:
+    long_daily_charge_fraction: "0.000153815"
+    short_daily_charge_fraction: "-0.000071615"
+    charge_time_utc: "22:00"
+    weekend_multiplier_days: 3
+    as_of: "2026-11-10T21:22:00Z"
+    source: "Capital.com demo API overnightFee longRate -0.0153815 shortRate 0.0071615 percent a night"
+- kind: commodity
+  identity: {instrument_id: "CAPITAL:SILVER", broker: capital_com_demo, broker_asset_id: SILVER, symbol: SILVER, currency: USD, product_type: CFD, track: COMMODITIES}
+  underlying: Silver
+  quantity_unit: contract
+  quantity_step: "0.1"
+  min_quantity: "1"
+  min_notional: "0"
+  price_tick: "0.001"
+  contract_multiplier: "1"
+  price_scale: "1"
+  exposure_tags: [SILVER]
+  allowed_directions: [LONG, SHORT]
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-10T21:22:00Z"
+  source: Capital.com demo API /markets SILVER, read 2026-11-10
+  margin: {initial_margin_fraction: "0.10", maintenance_margin_fraction: "0.05", netting_mode: UNKNOWN}
+  financing:
+    long_daily_charge_fraction: "0.000154036"
+    short_daily_charge_fraction: "-0.000071836"
+    charge_time_utc: "22:00"
+    weekend_multiplier_days: 3
+    as_of: "2026-11-10T21:22:00Z"
+    source: "Capital.com demo API overnightFee longRate -0.0154036 shortRate 0.0071836 percent a night"
+- kind: commodity
+  identity: {instrument_id: "CAPITAL:OIL_CRUDE", broker: capital_com_demo, broker_asset_id: OIL_CRUDE, symbol: OIL_CRUDE, currency: USD, product_type: CFD, track: COMMODITIES}
+  underlying: Crude oil spot
+  quantity_unit: contract
+  quantity_step: "0.1"
+  min_quantity: "1"
+  min_notional: "0"
+  price_tick: "0.001"
+  contract_multiplier: "1"
+  price_scale: "1"
+  exposure_tags: [OIL]
+  allowed_directions: [LONG, SHORT]
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-10T21:22:00Z"
+  source: Capital.com demo API /markets OIL_CRUDE, read 2026-11-10
+  margin: {initial_margin_fraction: "0.10", maintenance_margin_fraction: "0.05", netting_mode: UNKNOWN}
+  financing:
+    long_daily_charge_fraction: "0.0001096"
+    short_daily_charge_fraction: "0.0001096"
+    charge_time_utc: "22:00"
+    weekend_multiplier_days: 3
+    as_of: "2026-11-10T21:22:00Z"
+    source: "Capital.com demo API overnightFee longRate -0.01096 shortRate -0.01096 percent a night"
+- kind: commodity
+  identity: {instrument_id: "CAPITAL:US500", broker: capital_com_demo, broker_asset_id: US500, symbol: US500, currency: USD, product_type: CFD, track: COMMODITIES}
+  underlying: US 500
+  quantity_unit: contract
+  quantity_step: "0.01"
+  min_quantity: "0.01"
+  min_notional: "0"
+  price_tick: "0.1"
+  contract_multiplier: "1"
+  price_scale: "1"
+  exposure_tags: [EQUITY_INDEX]
+  allowed_directions: [LONG, SHORT]
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-10T21:22:00Z"
+  source: Capital.com demo API /markets US500, read 2026-11-10
+  margin: {initial_margin_fraction: "0.05", maintenance_margin_fraction: "0.025", netting_mode: UNKNOWN}
+  financing:
+    long_daily_charge_fraction: "0.000222069"
+    short_daily_charge_fraction: "0.000000153"
+    charge_time_utc: "22:00"
+    weekend_multiplier_days: 3
+    as_of: "2026-11-10T21:22:00Z"
+    source: "Capital.com demo API overnightFee longRate -0.0222069 shortRate -0.0000153 percent a night"
+- kind: commodity
+  identity: {instrument_id: "CAPITAL:US100", broker: capital_com_demo, broker_asset_id: US100, symbol: US100, currency: USD, product_type: CFD, track: COMMODITIES}
+  underlying: US Tech 100
+  quantity_unit: contract
+  quantity_step: "0.001"
+  min_quantity: "0.001"
+  min_notional: "0"
+  price_tick: "0.1"
+  contract_multiplier: "1"
+  price_scale: "1"
+  exposure_tags: [EQUITY_INDEX]
+  allowed_directions: [LONG, SHORT]
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-10T21:22:00Z"
+  source: Capital.com demo API /markets US100, read 2026-11-10
+  margin: {initial_margin_fraction: "0.05", maintenance_margin_fraction: "0.025", netting_mode: UNKNOWN}
+  financing:
+    long_daily_charge_fraction: "0.000222069"
+    short_daily_charge_fraction: "0.000000153"
+    charge_time_utc: "22:00"
+    weekend_multiplier_days: 3
+    as_of: "2026-11-10T21:22:00Z"
+    source: "Capital.com demo API overnightFee longRate -0.0222069 shortRate -0.0000153 percent a night"
+- kind: commodity
+  identity: {instrument_id: "CAPITAL:US30", broker: capital_com_demo, broker_asset_id: US30, symbol: US30, currency: USD, product_type: CFD, track: COMMODITIES}
+  underlying: US Wall Street 30
+  quantity_unit: contract
+  quantity_step: "0.001"
+  min_quantity: "0.001"
+  min_notional: "0"
+  price_tick: "0.1"
+  contract_multiplier: "1"
+  price_scale: "1"
+  exposure_tags: [EQUITY_INDEX]
+  allowed_directions: [LONG, SHORT]
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-10T21:22:00Z"
+  source: Capital.com demo API /markets US30, read 2026-11-10
+  margin: {initial_margin_fraction: "0.05", maintenance_margin_fraction: "0.025", netting_mode: UNKNOWN}
+  financing:
+    long_daily_charge_fraction: "0.000222069"
+    short_daily_charge_fraction: "0.000000153"
+    charge_time_utc: "22:00"
+    weekend_multiplier_days: 3
+    as_of: "2026-11-10T21:22:00Z"
+    source: "Capital.com demo API overnightFee longRate -0.0222069 shortRate -0.0000153 percent a night"
+- kind: commodity
+  identity: {instrument_id: "CAPITAL:RTY", broker: capital_com_demo, broker_asset_id: RTY, symbol: RTY, currency: USD, product_type: CFD, track: COMMODITIES}
+  underlying: US Russell 2000
+  quantity_unit: contract
+  quantity_step: "0.01"
+  min_quantity: "0.01"
+  min_notional: "0"
+  price_tick: "0.1"
+  contract_multiplier: "1"
+  price_scale: "1"
+  exposure_tags: [EQUITY_INDEX]
+  allowed_directions: [LONG, SHORT]
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-10T21:22:00Z"
+  source: Capital.com demo API /markets RTY, read 2026-11-10
+  margin: {initial_margin_fraction: "0.10", maintenance_margin_fraction: "0.05", netting_mode: UNKNOWN}
+  financing:
+    long_daily_charge_fraction: "0.000222069"
+    short_daily_charge_fraction: "0.000000153"
+    charge_time_utc: "22:00"
+    weekend_multiplier_days: 3
+    as_of: "2026-11-10T21:22:00Z"
+    source: "Capital.com demo API overnightFee longRate -0.0222069 shortRate -0.0000153 percent a night"
+- kind: commodity
+  identity: {instrument_id: "CAPITAL:DE40", broker: capital_com_demo, broker_asset_id: DE40, symbol: DE40, currency: EUR, product_type: CFD, track: COMMODITIES}
+  underlying: Germany 40
+  quantity_unit: contract
+  quantity_step: "0.001"
+  min_quantity: "0.001"
+  min_notional: "0"
+  price_tick: "0.1"
+  contract_multiplier: "1"
+  price_scale: "1"
+  exposure_tags: [EQUITY_INDEX]
+  allowed_directions: [LONG, SHORT]
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-10T21:22:00Z"
+  source: Capital.com demo API /markets DE40, read 2026-11-10
+  margin: {initial_margin_fraction: "0.05", maintenance_margin_fraction: "0.025", netting_mode: UNKNOWN}
+  financing:
+    long_daily_charge_fraction: "0.000180211"
+    short_daily_charge_fraction: "0.000042011"
+    charge_time_utc: "22:00"
+    weekend_multiplier_days: 3
+    as_of: "2026-11-10T21:22:00Z"
+    source: "Capital.com demo API overnightFee longRate -0.0180211 shortRate -0.0042011 percent a night"
+- kind: commodity
+  identity: {instrument_id: "CAPITAL:EURUSD", broker: capital_com_demo, broker_asset_id: EURUSD, symbol: EURUSD, currency: USD, product_type: CFD, track: COMMODITIES}
+  underlying: EUR/USD
+  quantity_unit: contract
+  quantity_step: "100"
+  min_quantity: "100"
+  min_notional: "0"
+  price_tick: "0.00001"
+  contract_multiplier: "1"
+  price_scale: "1"
+  exposure_tags: [FX_EUR]
+  allowed_directions: [LONG, SHORT]
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-10T21:22:00Z"
+  source: Capital.com demo API /markets EURUSD, read 2026-11-10
+  margin: {initial_margin_fraction: "0.03333333", maintenance_margin_fraction: "0.016666665", netting_mode: UNKNOWN}
+  financing:
+    long_daily_charge_fraction: "0.0000802"
+    short_daily_charge_fraction: "0.000002"
+    charge_time_utc: "22:00"
+    weekend_multiplier_days: 3
+    as_of: "2026-11-10T21:22:00Z"
+    source: "Capital.com demo API overnightFee longRate -0.00802 shortRate -0.0002 percent a night"
+- kind: commodity
+  identity: {instrument_id: "CAPITAL:BTCUSD", broker: capital_com_demo, broker_asset_id: BTCUSD, symbol: BTCUSD, currency: USD, product_type: CFD, track: COMMODITIES}
+  underlying: Bitcoin
+  quantity_unit: contract
+  quantity_step: "0.0001"
+  min_quantity: "0.0001"
+  min_notional: "0"
+  price_tick: "0.01"
+  contract_multiplier: "1"
+  price_scale: "1"
+  exposure_tags: [CRYPTO_MAJOR]
+  allowed_directions: [LONG, SHORT]
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-10T21:22:00Z"
+  source: Capital.com demo API /markets BTCUSD, read 2026-11-10
+  margin: {initial_margin_fraction: "0.50", maintenance_margin_fraction: "0.25", netting_mode: UNKNOWN}
+  financing:
+    long_daily_charge_fraction: "0.000616438"
+    short_daily_charge_fraction: "-0.000136986"
+    charge_time_utc: "22:00"
+    weekend_multiplier_days: 1
+    as_of: "2026-11-10T21:22:00Z"
+    source: "Capital.com demo API overnightFee longRate -0.0616438 shortRate 0.0136986 percent a night"
+- kind: commodity
+  identity: {instrument_id: "CAPITAL:ETHUSD", broker: capital_com_demo, broker_asset_id: ETHUSD, symbol: ETHUSD, currency: USD, product_type: CFD, track: COMMODITIES}
+  underlying: Ether
+  quantity_unit: contract
+  quantity_step: "0.001"
+  min_quantity: "0.001"
+  min_notional: "0"
+  price_tick: "0.01"
+  contract_multiplier: "1"
+  price_scale: "1"
+  exposure_tags: [CRYPTO_MAJOR]
+  allowed_directions: [LONG, SHORT]
+  fractionable: true
+  evidence: DOCUMENTED
+  as_of: "2026-11-10T21:22:00Z"
+  source: Capital.com demo API /markets ETHUSD, read 2026-11-10
+  margin: {initial_margin_fraction: "0.50", maintenance_margin_fraction: "0.25", netting_mode: UNKNOWN}
+  financing:
+    long_daily_charge_fraction: "0.000616438"
+    short_daily_charge_fraction: "-0.000136986"
+    charge_time_utc: "22:00"
+    weekend_multiplier_days: 1
+    as_of: "2026-11-10T21:22:00Z"
+    source: "Capital.com demo API overnightFee longRate -0.0616438 shortRate 0.0136986 percent a night"

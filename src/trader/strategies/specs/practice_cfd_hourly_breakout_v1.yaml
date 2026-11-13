@@ -1,0 +1,20 @@
+# PRACTICE rule (ADR-0060), not a registered trial: the hourly channel break of T-0021
+# (cfd_hourly_breakout_v1) with the same channel, stop, target and day-trade exit, run on more
+# commodity CFDs and over more of the trading day: decisions on hourly bars ending 01:00 to
+# 20:00 UTC, flat at 21:00 UTC (before the 22:00 UTC financing charge and the daily break).
+# T-0021 on gold and two indices lost before costs at mid prices (-1.36 USD over 2,516 trades)
+# and -80.50 after them: practice, like the stocks bot's --practice, never evidence.
+strategy_id: practice_cfd_hourly_breakout
+version: 1
+family: CFD_HOURLY_CHANNEL
+feature_version: hourly-v1
+mode: breakout
+max_hold_hours: 20
+channel_hours: 24
+atr_hours: 24
+stop_atr_multiplier: "2"
+reward_risk: "2"
+entry_first_hour_utc: 1
+entry_last_hour_utc: 20
+flat_hour_utc: 21
+research_status: PRACTICE - untested variant run on the demo account only (ADR-0060)

@@ -1,0 +1,39 @@
+# Candidate C - dip-buy in an uptrend on daily ETF bars (strategies/dip_buy.py).
+# Published rule: L. Connors and C. Alvarez, "Short Term Trading Strategies That Work: A
+# Quantified Guide to Trading Stocks and ETFs" (TradingMarkets Publishing Group, 2008), the
+# 2-period RSI strategy: the close is above its 200-day simple moving average and the 2-period RSI
+# is below 10 -> buy; sell when the close is above the 5-day simple moving average.
+# FROZEN SPECIFICATION: every signal parameter is the published one; nothing was chosen or tuned
+# on our data. Declared before any run (decision record "Candidate C: dip-buy in an uptrend"):
+#  - decisions on a completed XNYS session's close; entry at the NEXT session's open with the
+#    engine's marketable limit (estimated ask + 5 bps, the project convention); the book buys on
+#    the close. A next open more than about 3 bps above the signal close is a missed entry;
+#  - exit signal: a completed close above SMA(5) sells at the next open (the book sells on the
+#    close);
+#  - disaster stop 3 x Wilder ATR(10) below the signal close (the book uses no stop; the policy
+#    needs an exit plan to size a trade); gaps through it sell at the open;
+#  - time exit after 10 exchange sessions (a bounded hold; not in the book);
+#  - target = SMA(5) at the signal, used only by the cost-coverage gate (target_role COST_GATE):
+#    never a resting profit exit;
+#  - long only, one position per instrument, the 13 equity ETFs of the daily basket (bonds and
+#    gold are not traded by this rule).
+# Wilder RSI and ATR as in features/daily.py (daily-v1). Studies need warmup_sessions >= 200.
+strategy_id: candidate_c_etf_dip_buy
+version: 1
+family: CANDIDATE_C
+track: STOCKS
+feature_version: daily-v1
+holding: OVERNIGHT
+target_role: COST_GATE
+max_hold_sessions: 10
+universe_symbols: [SPY, QQQ, IWM, DIA, XLB, XLE, XLF, XLI, XLK, XLP, XLU, XLV, XLY]
+trend_sma_sessions: 200
+rsi_period: 2
+rsi_entry_below: "10"
+exit_sma_sessions: 5
+atr_period: 10
+stop_atr_multiplier: "3"
+entry_limit_offset_bps: "5"
+entry_ttl_seconds: 120
+gap_allowance_bps: "10"
+research_status: UNVALIDATED - frozen published rule; evaluated only through registered trials

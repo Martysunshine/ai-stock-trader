@@ -1,0 +1,21 @@
+{
+  "name": "ai-stock-trader",
+  "private": true,
+  "description": "Workspace commands. The bot is Python (pyproject.toml, uv); the Trader Console and Sunshine Desk live in ui/. No dependencies here.",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "dev": "node ui/scripts/dev.mjs",
+    "start": "node ui/scripts/dev.mjs --prod",
+    "desk": "node ui/scripts/dev.mjs --open=/desk",
+    "setup": "node ui/scripts/dev.mjs --setup",
+    "bot": "node ui/scripts/bot.mjs",
+    "trader": "node ui/scripts/practice-trader.mjs",
+    "day": "node ui/scripts/day.mjs",
+    "db:up": "node ui/scripts/dev.mjs --db-up",
+    "db:stop": "node ui/scripts/dev.mjs --db-stop",
+    "test:ui": "node ui/scripts/run-ui.mjs test",
+    "typecheck:ui": "node ui/scripts/run-ui.mjs typecheck"
+  }
+}

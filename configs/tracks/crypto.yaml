@@ -1,0 +1,12 @@
+# CRYPTO_TRADING_TRACK.md: BTC/ETH spot, fully paid, long only. Disabled until its own
+# capability/cost report and replay evidence exist. Shares the single USD 50 portfolio.
+track: CRYPTO
+enabled: false
+description: BTC/EUR and ETH/EUR spot (Kraken first candidate), research and replay only.
+allowed_product_types: [CRYPTO_SPOT]
+replay_directions: [LONG]
+live_directions: []
+calendar: UTC_24_7
+decision_bar_minutes: 15
+context_bar_minutes: 60
+loss_windows: [UTC_DAY, UTC_WEEK]

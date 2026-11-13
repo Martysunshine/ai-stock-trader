@@ -1,0 +1,26 @@
+# In-process replay broker (brokers/replay). Fill rules: docs/replay_broker.md.
+# Simulates a large paper-style account; the internal USD 50 subledger still governs sizing.
+broker: replay
+environment: replay
+profile_version: replay-v1
+as_of: "2026-11-07T00:00:00Z"
+account_legal_type: SIMULATED
+rule_profile: UNVERIFIED
+cash_availability: BROKER_BUYING_POWER
+market_data_feed: SYNTHETIC
+market_data_consolidated: false
+order_visibility_lookups: 3
+order_visibility_window_seconds: 30
+fee_schedule_id: replay-demo-zero-commission-v1
+capabilities:
+  fractional.market.day: {supported: true, evidence: REPLAY_SIMULATED, source: brokers/replay}
+  fractional.limit.day: {supported: true, evidence: REPLAY_SIMULATED, source: brokers/replay}
+  fractional.stop.day: {supported: false, evidence: REPLAY_SIMULATED, source: brokers/replay}
+  fractional.bracket: {supported: false, evidence: REPLAY_SIMULATED, source: brokers/replay}
+  native_protective_stop:
+    supported: false
+    evidence: REPLAY_SIMULATED
+    source: brokers/replay
+    notes: replay uses monitored synthetic exits (ADR-0005)
+  client_order_id_unique: {supported: true, evidence: REPLAY_SIMULATED, source: brokers/replay}
+  extended_hours: {supported: false, evidence: REPLAY_SIMULATED, source: brokers/replay}

@@ -1,0 +1,17 @@
+# Capital.com CFDs (ADR-0052): no commission per order. The costs are the quoted spread, which the
+# CFD study takes from the broker's own bid/ask bars, and overnight financing, which it charges
+# from the instrument specs (configs/instruments/capital_demo_cfds_v1.yaml). A currency
+# conversion fee on non-USD instruments (DE40 in EUR) is not covered here: a study that trades
+# such an instrument must model it or leave the instrument out.
+schedule_id: capital-com-cfd-demo-2026-11-10
+description: Capital.com CFDs - zero commission; costs are the spread and overnight financing
+evidence: DOCUMENTED
+known: true
+source: Capital.com demo API dealing rules and position previews (no commission field), 2026-11-10
+as_of: "2026-11-10"
+currency: USD
+default_liquidity: TAKER
+components:
+  - type: flat_per_order
+    sides: [BUY, SELL]
+    amount: "0"

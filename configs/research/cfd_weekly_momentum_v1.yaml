@@ -1,0 +1,91 @@
+# Weekly momentum on the CFD sleeve's markets: gold, silver, crude oil, EUR/USD and the four US
+# indices, long and short (trial T-0025). ADR-0058. Fixed in the decision record before any result
+# existed; registered before it is run.
+kind: cfd_study
+study_id: cfd_weekly_momentum_v1
+title: Weekly momentum on commodity, currency and index CFDs - long or short by the sign of the week
+track: COMMODITIES
+description: >-
+  Time-series momentum over one week on the gold, silver, crude oil, EUR/USD and four US index
+  CFDs of Capital.com, the rule that passed on the crypto CFDs (T-0019), traded as the CFD
+  practice sleeve would: USD 100 per window, at most 2% of equity at the stop, at most two open
+  trades and one index trade at a time, total notional at most equity, fills on the broker's own
+  bid and ask, overnight financing charged each night.
+quote_dataset: capital_demo_cfd_1h_v1
+bars: {source_minutes: 60, calendar: BROKER_CFD, closed_run_max_weekdays: 2}
+instruments:
+  - {instrument_id: "CAPITAL:GOLD"}
+  - {instrument_id: "CAPITAL:SILVER"}
+  - {instrument_id: "CAPITAL:OIL_CRUDE"}
+  - {instrument_id: "CAPITAL:EURUSD"}
+  - {instrument_id: "CAPITAL:US500"}
+  - {instrument_id: "CAPITAL:US100"}
+  - {instrument_id: "CAPITAL:US30"}
+  - {instrument_id: "CAPITAL:RTY"}
+instrument_specs: configs/instruments/capital_demo_cfds_v1.yaml
+fee_schedule: configs/fees/capital_com_cfd_demo_v1.yaml
+policy: configs/policy/cfd_sleeve_v1.yaml
+costs:
+  slippage_bps: "1"
+  # today's median quoted spread (hourly dataset, 2026): a bar quoting less is not believed
+  spread_floor_bps:
+    "CAPITAL:GOLD": "1.1"
+    "CAPITAL:SILVER": "8.5"
+    "CAPITAL:OIL_CRUDE": "4.4"
+    "CAPITAL:EURUSD": "0.6"
+    "CAPITAL:US500": "0.8"
+    "CAPITAL:US100": "0.6"
+    "CAPITAL:US30": "0.4"
+    "CAPITAL:RTY": "1.8"
+stress:
+  spread_multiplier: "2"
+  slippage_multiplier: "2"
+  financing_charge_multiplier: "1.5"
+  financing_credits: false
+  missed_entry_percent: 5
+warmup_days: 60
+splits:
+  development_start: "2019-01-01T00:00:00Z"
+  holdout_start: "2026-08-01T00:00:00Z"
+  holdout_end: "2026-11-01T00:00:00Z"
+  walk_forward: {train_months: 12, validation_months: 3, test_months: 3, step_months: 3}
+  embargo_minutes: 0
+bootstrap:
+  replicates: 2000
+  mean_block_sessions: "5"
+  seed: 20261125
+annualisation_sessions: 260
+universe_selection: >-
+  Every epic of the CFD practice sleeve that is quoted in USD, chosen before any result: gold,
+  silver, crude oil, EUR/USD and the four US indices (US 500, US Tech 100, US 30, Russell 2000).
+  DE40 is left out: it is quoted in euros and its conversion cost has not been read. The four
+  indices share one exposure group, so one index trade is open at a time.
+horizon: >-
+  Daily bars, one per weekday session built from the broker's hourly bid and ask, the weekend
+  hours joined to Monday. Friday's session decides the week; the trade is held until its stop,
+  its target, or one week after its entry, when the next week's trade may take its place.
+  Three-month windows from USD 100, each an independent deployment. Trading from 2019, when the
+  hourly dataset's quoted spreads become real for every epic (RTY's history starts 2019-02-13).
+entry_exit_timing: >-
+  Decision on Friday's completed daily bar (its end, the Friday close); a market order at the
+  next open (Sunday evening), buying the ask or selling the bid with 1 bp of slippage, sized at
+  that price; refused when that open is beyond the stop or the quoted spread is above 20 bps.
+  Stops and targets are checked inside each bar on the side that would fill, the stop first when
+  both are touched; the time exit closes at the first open at or after one week. When several
+  epics signal at the same open, the larger absolute weekly move is taken first. Overnight
+  financing is charged at 22:00 UTC, the Friday night three times.
+known_before_registration: >-
+  The same rule on the Bitcoin and Ether CFDs (T-0019) made +19.51 USD in the base view and +1.23
+  stressed. On gold and the two US indices of T-0021 and T-0022 the 24-hour channel had no edge
+  even at mid prices; on the four indices the RSI(2) dip (T-0018) earned before financing and
+  about nothing after it. The quality report of the hourly dataset was read before the floors and
+  the period were fixed. No momentum rule has been run on these instruments in this project.
+trials:
+  - trial_id: T-0025
+    spec_file: src/trader/strategies/specs/cfd_weekly_momentum_v1.yaml
+    hypothesis: >-
+      On Capital.com's gold, silver, crude oil, EUR/USD and US index CFDs, trading the sign of the
+      week (long above the close five sessions earlier, short below) at the Sunday-evening open,
+      with a stop 3 x ATR(10) away, a target twice that distance and a one-week hold, earns a
+      positive net result after the quoted spread, slippage and overnight financing, sized as the
+      CFD practice sleeve, over 2019-2026 in independent three-month deployments.

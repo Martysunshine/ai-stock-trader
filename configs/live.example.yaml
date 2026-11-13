@@ -1,0 +1,23 @@
+# EXAMPLE ONLY - not usable. Live trading requires (runtime/live_guard.py): host role LIVE,
+# `trader live --enable-live`, an allowlisted account, a promotion manifest with recorded
+# G0-G4 evidence and owner enablement, a certified live adapter with native protection, and
+# credentials in the OS keyring. None of these exist yet.
+config_version: 1
+mode: live
+live_enabled: true
+policy_file: policy/base.yaml
+tracks_dir: tracks
+portfolio_id: pf-main
+live_account_allowlist: [acct-owner-live-pilot]
+accounts:
+  - alias: live-pilot
+    account_id: acct-owner-live-pilot
+    track: STOCKS
+    broker: uncertified
+    capability_profile: capabilities/alpaca_documented.yaml
+    fee_schedule: fees/alpaca_us_equities.yaml
+    instruments: instruments/stocks_research.yaml
+    secret_ref: ai-stock-trader/live-pilot
+database:
+  backend: postgresql
+  url_env: TRADER_DATABASE_URL

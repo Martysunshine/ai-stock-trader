@@ -1,0 +1,40 @@
+# SYNTHETIC instruments for the replay demonstrator. SYNA/SYNB are not real tickers and the
+# recorded session in research/sessions/ is generated data, not market history.
+- kind: equity
+  identity:
+    instrument_id: "XNYS:SYNA"
+    broker: replay
+    broker_asset_id: synthetic-syna
+    symbol: SYNA
+    venue_mic: XNYS
+    currency: USD
+    product_type: ORDINARY_EQUITY
+    track: STOCKS
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  fractionable: true
+  evidence: REPLAY_SIMULATED
+  as_of: "2026-11-07T00:00:00Z"
+  source: synthetic replay fixture
+- kind: equity
+  identity:
+    instrument_id: "XNYS:SYNB"
+    broker: replay
+    broker_asset_id: synthetic-synb
+    symbol: SYNB
+    venue_mic: XNYS
+    currency: USD
+    product_type: ORDINARY_EQUITY
+    track: STOCKS
+  quantity_step: "0.000000001"
+  min_quantity: "0.000000001"
+  min_notional: "1.00"
+  price_tick: "0.01"
+  exposure_tags: []
+  fractionable: true
+  evidence: REPLAY_SIMULATED
+  as_of: "2026-11-07T00:00:00Z"
+  source: synthetic replay fixture

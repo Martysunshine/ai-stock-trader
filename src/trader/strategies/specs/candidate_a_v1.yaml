@@ -1,0 +1,20 @@
+# Candidate A - intraday trend continuation (strategy_and_profitability.md section 4).
+# FROZEN SPECIFICATION: these parameters are a declared rule, not a tested edge. Research
+# registration, the {1.0, 1.5} x {1.5, 2.0} grid and evaluation happen in M2.
+strategy_id: candidate_a_trend_continuation
+version: 1
+feature_version: momentum-v1
+decision_bar_minutes: 5
+context_bar_minutes: 15
+breakout_lookback_bars: 6
+atr_period_bars: 6
+atr_stop_multiplier: "1.5"
+reward_risk_multiple: "2.0"
+max_hold_minutes: 60
+entry_limit_offset_bps: "5"
+entry_ttl_seconds: 120
+candidate_ttl_seconds: 60
+gap_allowance_bps: "10"
+require_above_session_vwap: true
+require_positive_context: true
+research_status: UNVALIDATED - frozen rule specification; no out-of-sample evidence yet

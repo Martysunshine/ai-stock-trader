@@ -1,0 +1,32 @@
+# Candidate B - controlled mean reversion for continuous crypto spot markets
+# (strategy_and_profitability.md section 5; CRYPTO_TRADING_TRACK.md section 5).
+# FROZEN SPECIFICATION. A completed-bar close at least 2 ATR(14) below the rolling 24-hour
+# volume-weighted typical price, in a quiet regime (efficiency ratio over 4 hours <= 0.30 and
+# ATR(14)/ATR(96) <= 1.5), confirmed by a stabilising bar (close > open and > previous close).
+# Stop 1.5 ATR below the close (invalidation), target = the reference, hold <= 6 hours. Never
+# averages down or widens a stop. A separate experiment family from Candidate A.
+strategy_id: candidate_b_crypto_meanrev
+version: 1
+family: CANDIDATE_B
+track: CRYPTO
+feature_version: streaming-v1
+window_mode: ROLLING
+decision_bar_minutes: 15
+context_bar_minutes: 60
+context_lookback_bars: 3
+reference_window_bars: 96
+use_source_vwap: false
+atr_period_bars: 14
+long_atr_period_bars: 96
+efficiency_window_bars: 16
+breakout_lookback_bars: 6
+max_hold_minutes: 360
+entry_limit_offset_bps: "5"
+entry_ttl_seconds: 120
+candidate_ttl_seconds: 60
+gap_allowance_bps: "10"
+entry_deviation_atr: "2.0"
+max_efficiency_ratio: "0.30"
+max_volatility_ratio: "1.5"
+stop_atr_multiplier: "1.5"
+research_status: UNVALIDATED - frozen rule; evaluated only through registered trials

@@ -1,0 +1,42 @@
+# Kraken spot - DOCUMENTED evidence (CRYPTO_TRADING_TRACK.md sections 6-7, research 2026-11-06).
+# UAT access needs onboarding and validation mode does not test matching; the conditional close
+# is NOT an atomic OCO bracket; CancelAllOrdersAfter cancels ALL orders, so it stays disabled.
+broker: kraken
+environment: paper
+profile_version: kraken-documented-2026-11-06
+as_of: "2026-11-06T00:00:00Z"
+account_legal_type: CRYPTO_SPOT
+rule_profile: UNVERIFIED
+cash_availability: UNKNOWN
+market_data_feed: KRAKEN_PUBLIC
+market_data_consolidated: false
+fee_schedule_id: kraken-pro-spot-tier1-2026-11-06
+dead_man_timer:
+  enabled: false
+  scope: ALL_ORDERS
+capabilities:
+  spot.limit:
+    supported: true
+    evidence: DOCUMENTED
+    source: https://docs.kraken.com/exchange/api-reference/spot-websocket-v2/add_order
+  spot.market:
+    supported: true
+    evidence: DOCUMENTED
+    source: https://docs.kraken.com/exchange/api-reference/spot-websocket-v2/add_order
+  native_protective_stop:
+    supported: null
+    evidence: UNKNOWN
+    source: stop-loss order types are documented; tiny-quantity and fee-adjusted behaviour uncertified
+  conditional_close_atomic_oco:
+    supported: false
+    evidence: DOCUMENTED
+    source: https://docs.kraken.com/exchange/api-reference/spot-websocket-v2/add_order
+    notes: a secondary order is created per primary fill
+  client_order_id_unique:
+    supported: null
+    evidence: UNKNOWN
+    source: a client reference exists; an idempotency guarantee is not certified
+  sandbox_matching:
+    supported: false
+    evidence: DOCUMENTED
+    source: https://support.kraken.com/articles/advanced-api-faq

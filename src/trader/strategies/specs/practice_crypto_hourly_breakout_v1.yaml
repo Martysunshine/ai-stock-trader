@@ -1,0 +1,19 @@
+# PRACTICE rule (ADR-0060), not a registered trial: the hourly channel break of T-0023
+# (cfd_crypto_hourly_breakout_v1) on Bitcoin and Ether with the same channel, stop, target and
+# day-trade exit, and three more decision hours: bars ending 00:00 to 20:00 UTC, flat at 21:00
+# UTC (before the 22:00 UTC financing charge). The tested setup keeps its own hours; this one is
+# practice, like the stocks bot's --practice, never evidence.
+strategy_id: practice_crypto_hourly_breakout
+version: 1
+family: CFD_HOURLY_CHANNEL
+feature_version: hourly-v1
+mode: breakout
+max_hold_hours: 21
+channel_hours: 24
+atr_hours: 24
+stop_atr_multiplier: "2"
+reward_risk: "2"
+entry_first_hour_utc: 0
+entry_last_hour_utc: 20
+flat_hour_utc: 21
+research_status: PRACTICE - untested variant run on the demo account only (ADR-0060)

@@ -1,0 +1,53 @@
+# Alpaca retail Trading API - DOCUMENTED evidence only (markets_and_brokers.md section 2,
+# research 2026-10-13, fractional page re-checked 2026-11-07). Nothing is demonstrated in paper or confirmed live yet. Conflicting
+# fractional order-type wording is treated as unresolved (UNKNOWN), per the specification.
+broker: alpaca
+environment: paper
+profile_version: alpaca-documented-2026-11-07
+as_of: "2026-11-07T00:00:00Z"
+account_legal_type: MARGIN
+rule_profile: UNVERIFIED
+cash_availability: UNKNOWN
+market_data_feed: IEX
+market_data_consolidated: false
+fee_schedule_id: alpaca-us-equities-unverified
+capabilities:
+  fractional.market.day:
+    supported: true
+    evidence: DOCUMENTED
+    source: https://docs.alpaca.markets/us/docs/fractional-trading
+  fractional.limit.day:
+    supported: null
+    evidence: UNKNOWN
+    source: https://docs.alpaca.markets/us/docs/fractional-trading
+    notes: "re-checked 2026-11-07: body lists market, limit, stop and stop-limit with time_in_force=day, but the closing disclaimer still says fractional trades are market orders in regular hours only - conflict unresolved"
+  fractional.stop.day:
+    supported: null
+    evidence: UNKNOWN
+    source: https://docs.alpaca.markets/us/docs/fractional-trading
+  fractional.stop_limit.day:
+    supported: null
+    evidence: UNKNOWN
+    source: https://docs.alpaca.markets/us/docs/fractional-trading
+  fractional.bracket:
+    supported: null
+    evidence: UNKNOWN
+    source: https://docs.alpaca.markets/us/docs/fractional-trading
+  native_protective_stop:
+    supported: null
+    evidence: UNKNOWN
+    source: fractional protective orders unverified
+  extended_hours:
+    supported: null
+    evidence: UNKNOWN
+    source: https://docs.alpaca.markets/us/docs/fractional-trading
+    notes: "page (2026-11-07) mentions extended-hours fractional limit orders; not used in v1"
+  short_selling:
+    supported: false
+    evidence: DOCUMENTED
+    source: https://docs.alpaca.markets/us/docs/fractional-trading
+    notes: "fractional short sales are not supported; fractional sells are marked long"
+  client_order_id_unique:
+    supported: null
+    evidence: UNKNOWN
+    source: to be demonstrated in paper (M4)

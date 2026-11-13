@@ -1,0 +1,36 @@
+# Practice rules for the assistant's crypto sleeve (ADR-0046, ADR-0049): Bitcoin and Ether as
+# CFDs on the Capital.com DEMO account, under the same PreToolUse guard and plan-first journal as
+# the CFD sleeve (trader.practice.capital_guard, trader.practice.journal).
+#
+# Why not spot on the Kraken simulator, where this sleeve started: Kraken charges 0.80% a side,
+# 1.6% a round trip, and a trade of a few days cannot earn that back. Capital.com quoted BTC/USD
+# at a spread of 0.07% of the price and ETH/USD at 0.09% on 2026-11-10, with overnight financing
+# of 0.062% a night on a long (a short is paid 0.014%) and 50% margin. The two Kraken trades were
+# closed that day (-0.64 USD, half of it fees); the journal below is the same file and chain, so
+# the sleeve's equity carries over. The Kraken simulator takes no more orders (the guard blocks
+# them).
+#
+# The sleeve started at USD 100 and compounds. Long or short. Capital.com holds the stop and the
+# target at the broker. Minimum sizes are Capital.com's; maximum sizes keep one position's
+# notional near USD 100 at 2026-11-10 prices (BTC 73,500, ETH 2,050); review them when the
+# sleeve has grown by half. Short-term rules as the CFD sleeve: a week at most, a target at most
+# twice the planned risk.
+venue: capital.com-demo
+account_currency: USD
+sleeve_start_usd: "100"
+risk_fraction: "0.01"
+floor_fraction: "0.90"
+max_open_trades: 4             # the whole sleeve (ADR-0056; it was 2)
+max_open_trades_per_setup: 2   # each setup, and the trades planned by hand together, as each trial ran
+max_opens_per_utc_day: 4       # each setup, and by hand together
+plan_window_minutes: 15
+long_only: false
+max_hold_hours: 168           # time stop: one week after the open; an overdue trade blocks new plans
+max_reward_risk: "2"          # target at most 2 x the planned risk from the entry
+journal: runs/practice/kraken_paper_journal.jsonl   # the sleeve's one chain since 2026-11-10
+epics:
+  BTCUSD: {name: Bitcoin, quote_currency: USD, decimals: 2, min_size: "0.0001", max_size: "0.0015"}
+  ETHUSD: {name: Ether,   quote_currency: USD, decimals: 2, min_size: "0.001",  max_size: "0.05"}
+# One open trade per group: Bitcoin and Ether move together.
+groups:
+  crypto: [BTCUSD, ETHUSD]

@@ -1,0 +1,91 @@
+# Crypto baseline study (implementation_roadmap.md M2; CRYPTO_TRADING_TRACK.md sections 5, 9).
+# Everything below is fixed BEFORE any trial runs and is bound into each trial's registration.
+study_id: crypto_baseline_v1
+title: Crypto spot baselines - Candidates A and B on BTC/USD and ETH/USD (15-minute bars)
+track: CRYPTO
+description: >-
+  Deterministic rule baselines for the crypto track on a USD 50 ledger with the shared risk
+  policy. Prices come from Coinbase Exchange public candles as a proxy for Kraken (the first
+  adapter candidate, whose public endpoint has no deep history); execution uses Kraken pair
+  metadata and the documented Kraken Pro Tier 1 taker fees. The proxy basis is measured on a
+  recent overlapping week and reported.
+price_dataset: coinbase_btc_eth_usd_15m_v1
+basis_datasets: [coinbase_btc_eth_usd_15m_recent_v1, kraken_btc_eth_usd_15m_recent_v1]
+instruments:
+  - {price_instrument_id: "COINBASE:BTC/USD", execution_instrument_id: "KRAKEN:BTC/USD"}
+  - {price_instrument_id: "COINBASE:ETH/USD", execution_instrument_id: "KRAKEN:ETH/USD"}
+instrument_specs: configs/instruments/kraken_spot_usd.yaml
+fee_schedule: configs/fees/kraken_spot_tier1_usd.yaml
+policy: configs/policy/base.yaml
+fills:
+  label: base
+  half_spread_bps: "1.0"   # Kraken point samples: BTC 0.013 bps, ETH 0.045 bps full spread (conservative)
+  slippage_bps: "2.0"      # covers the decision-to-order delay and adverse selection
+  participation: "0.10"    # at most 10% of a bar's volume
+  latency_ms: 500
+stress:
+  multiplier: "2"          # risk_and_validation section 7: at least twice the base friction
+  missed_entry_percent: 5  # deterministic simulated outages / missed trades
+loss_windows: [UTC_DAY, UTC_WEEK]
+session_basis: UTC_DAY
+annualisation_sessions: 365
+splits:
+  development_start: "2023-11-01T00:00:00Z"
+  holdout_start: "2026-08-01T00:00:00Z"
+  holdout_end: "2026-11-01T00:00:00Z"
+  walk_forward: {train_months: 12, validation_months: 3, test_months: 3, step_months: 3}
+  embargo_minutes: 360
+operating_costs_usd_per_month: "0.00"  # local compute, free public data, no paid LLM calls
+bootstrap:
+  replicates: 2000
+  mean_block_sessions: "5"
+  seed: 20261107
+universe_selection: >-
+  Fixed by the crypto track specification (BTC and ETH spot, CRYPTO section 2) before any data
+  was inspected. USD-quoted pairs because the project's base currency is USD; EUR pairs depend
+  on the owner's account. No symbol was chosen from results.
+horizon: >-
+  15-minute decision bars with a one-hour context; maximum hold 360 minutes; positions may span
+  UTC day boundaries; UTC-day sessions and Monday-UTC weeks for loss limits.
+entry_exit_timing: >-
+  Decision at bar end + 1 s, order live 500 ms later; marketable buy limit at the estimated ask
+  plus 5 bps, filled only at the next bar's open within the limit (TTL 120 s), otherwise missed.
+  Exits: time exit and gap-through-stop at the next open; intrabar stop before target when both
+  are touched; target (limit) only when the estimated bid trades strictly through it. All fills
+  at estimated bid/ask plus slippage; Kraken Tier 1 taker fees on both legs.
+trials:
+  - trial_id: T-0001
+    spec_file: src/trader/strategies/specs/candidate_a_crypto_v1.yaml
+    overrides: {atr_stop_multiplier: "1.0", reward_risk_multiple: "1.5"}
+    hypothesis: >-
+      After an established upward trend (positive three-hour context return and a close above
+      the rolling 24-hour volume-weighted reference), a completed 15-minute close above the
+      previous six highs on BTC/USD or ETH/USD continues often and far enough to cover Kraken
+      Tier 1 taker fees, spread and slippage on both legs, with a 1.0 x ATR(14) stop and a 1.5R
+      target within six hours.
+  - trial_id: T-0002
+    spec_file: src/trader/strategies/specs/candidate_a_crypto_v1.yaml
+    overrides: {atr_stop_multiplier: "1.0", reward_risk_multiple: "2.0"}
+    hypothesis: >-
+      As T-0001 (Candidate A trend continuation on BTC/USD and ETH/USD 15-minute bars) with a
+      1.0 x ATR(14) stop and a 2.0R target within six hours, net of Kraken Tier 1 taker fees.
+  - trial_id: T-0003
+    spec_file: src/trader/strategies/specs/candidate_a_crypto_v1.yaml
+    overrides: {atr_stop_multiplier: "1.5", reward_risk_multiple: "1.5"}
+    hypothesis: >-
+      As T-0001 (Candidate A trend continuation on BTC/USD and ETH/USD 15-minute bars) with a
+      1.5 x ATR(14) stop and a 1.5R target within six hours, net of Kraken Tier 1 taker fees.
+  - trial_id: T-0004
+    spec_file: src/trader/strategies/specs/candidate_a_crypto_v1.yaml
+    overrides: {atr_stop_multiplier: "1.5", reward_risk_multiple: "2.0"}
+    hypothesis: >-
+      As T-0001 (Candidate A trend continuation on BTC/USD and ETH/USD 15-minute bars) with a
+      1.5 x ATR(14) stop and a 2.0R target within six hours, net of Kraken Tier 1 taker fees.
+  - trial_id: T-0005
+    spec_file: src/trader/strategies/specs/candidate_b_crypto_v1.yaml
+    hypothesis: >-
+      In a quiet regime (efficiency ratio over four hours at most 0.30 and ATR(14)/ATR(96) at
+      most 1.5), a completed 15-minute close at least 2 ATR(14) below the rolling 24-hour
+      volume-weighted reference on BTC/USD or ETH/USD, confirmed by a stabilising bar, reverts
+      toward the reference with positive net expectancy after Kraken Tier 1 taker fees, spread
+      and slippage, using a 1.5 x ATR stop and a six-hour time exit.

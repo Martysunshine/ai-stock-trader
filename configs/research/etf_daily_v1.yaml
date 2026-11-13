@@ -1,0 +1,193 @@
+# Daily ETF study (owner budget decision 2026-11-09, BUDGET_DECISION seq 44: "Candidate C dip-buy
+# in an uptrend and Candidate D trend timing on liquid ETFs with Alpaca SIP daily bars
+# 2016-2026"; strategy_and_profitability.md sections 3-5; risk_and_validation.md sections 5-7).
+# Everything below is fixed BEFORE any trial runs and is bound into each trial's registration.
+# Prepared 2026-11-09 on ws2/integrate; NOT registered: the integrator registers T-0013 and
+# T-0014 (budget 20, 12 used) on `sunshine` only after alpaca_us_etfs_daily_sip_v1 is ACQUIRED,
+# its quality report is reviewed, and the open items in docs/runbook.md section 10 are settled.
+# No strategy has been evaluated on real ETF data; the rules and every number here were chosen
+# without looking at it.
+study_id: etf_daily_v1
+title: Daily ETF rules - Candidate C dip-buy in an uptrend and Candidate D trend timing on 16 US ETFs (daily SIP bars)
+track: STOCKS
+# Track STOCKS: US-listed ETFs are exchange-traded equity securities bought on the same Alpaca
+# equities route, priced by the same fee schedule and NYSE calendar as the stock baseline, and
+# their instrument specs carry track STOCKS (configs/instruments/etfs_research.yaml). GLD is a
+# gold exposure but an equity-route security, not a CFD or futures product, so COMMODITIES does
+# not apply. The research engine sizes with the shared policy and does not apply a runtime track
+# profile; the STOCKS paper/live profile still admits ordinary shares only, so these ETFs stay
+# research-only (FORBIDDEN_PRODUCT at the risk engine) until the owner approves a profile.
+description: >-
+  Two frozen published daily-bar rules on a USD 50 ledger with the shared risk policy, where the
+  expected move per trade (several percent over days to months) is large relative to Alpaca's
+  per-order cent roundings, unlike the 5- and 15-minute baselines. T-0013: Connors and Alvarez
+  (2008) 2-period RSI dip-buy above the 200-session average on the 13 equity ETFs. T-0014: Faber
+  (2007) 10-month moving-average trend timing on all 16 ETFs. Alpaca SIP daily raw bars with
+  splits applied point-in-time; decisions at a completed session's close, fills at the next
+  session's open. Execution assumes Alpaca's commission-free API trading with SEC Section 31,
+  FINRA TAF and CAT pass-through fees at the highest rates of 2022-2026, rounded up to the cent on
+  every order.
+price_dataset: alpaca_us_etfs_daily_sip_v1
+basis_datasets: []  # bars come from the execution broker's own data API: no proxy basis to measure
+instruments:  # price and execution ids are the same: listing-exchange MICs from Alpaca's asset records
+  - {price_instrument_id: "ARCX:SPY", execution_instrument_id: "ARCX:SPY"}
+  - {price_instrument_id: "XNAS:QQQ", execution_instrument_id: "XNAS:QQQ"}
+  - {price_instrument_id: "ARCX:IWM", execution_instrument_id: "ARCX:IWM"}
+  - {price_instrument_id: "ARCX:DIA", execution_instrument_id: "ARCX:DIA"}
+  - {price_instrument_id: "ARCX:XLB", execution_instrument_id: "ARCX:XLB"}
+  - {price_instrument_id: "ARCX:XLE", execution_instrument_id: "ARCX:XLE"}
+  - {price_instrument_id: "ARCX:XLF", execution_instrument_id: "ARCX:XLF"}
+  - {price_instrument_id: "ARCX:XLI", execution_instrument_id: "ARCX:XLI"}
+  - {price_instrument_id: "ARCX:XLK", execution_instrument_id: "ARCX:XLK"}
+  - {price_instrument_id: "ARCX:XLP", execution_instrument_id: "ARCX:XLP"}
+  - {price_instrument_id: "ARCX:XLU", execution_instrument_id: "ARCX:XLU"}
+  - {price_instrument_id: "ARCX:XLV", execution_instrument_id: "ARCX:XLV"}
+  - {price_instrument_id: "ARCX:XLY", execution_instrument_id: "ARCX:XLY"}
+  - {price_instrument_id: "XNAS:TLT", execution_instrument_id: "XNAS:TLT"}
+  - {price_instrument_id: "XNAS:IEF", execution_instrument_id: "XNAS:IEF"}
+  - {price_instrument_id: "ARCX:GLD", execution_instrument_id: "ARCX:GLD"}
+instrument_specs: configs/instruments/etfs_research.yaml
+fee_schedule: configs/fees/alpaca_us_equities_v2.yaml
+policy: configs/policy/base.yaml
+fills:
+  label: base
+  # These are among the most liquid US-listed funds; most quote one cent wide. One cent is
+  # 0.2-1 bps of a USD 100-700 fund (SPY, QQQ, IWM, DIA, TLT, IEF, GLD and most sector funds)
+  # and 2-4 bps at USD 25-50 (XLF and, at times, XLE, XLU, XLP). An assumption: daily bars carry
+  # no quotes. 1 bp per side (2 bps full spread) is at least half a tick for every fund above
+  # USD 50. Half-spread plus slippage (2 bps per side) covers half a tick down to USD 25. The
+  # stressed view (2x) covers a full tick at that price, and its 4 bps spread stays inside the
+  # policy's 10 bps entry-spread cap.
+  half_spread_bps: "1.0"
+  # Covers the opening print not being the auction price (Alpaca's daily open is the first
+  # qualifying trade) and adverse selection at the open. Smaller than the stock baseline's 2 bps
+  # because these funds trade far larger and steadier opening volume than single stocks.
+  slippage_bps: "1.0"
+  # At most 10% of the session's volume; SIP volume is consolidated and includes 04:00-20:00
+  # trades. USD 1-25 orders never come near it.
+  participation: "0.10"
+  latency_ms: 500  # irrelevant for next-open orders: they can fill only at the next open
+stress:
+  multiplier: "2"          # risk_and_validation section 7: at least twice the base friction
+  missed_entry_percent: 5  # deterministic simulated outages / missed trades
+loss_windows: [NY_SESSION, NY_WEEK, UTC_DAY, UTC_WEEK]
+session_basis: XNYS
+annualisation_sessions: 252
+# 260 exchange sessions (about one trading year) of feature-only bars before every window, the
+# continuous deployment and the data load. Candidate C needs 200 (SMA(200);
+# DipBuySpec.min_warmup_sessions). Candidate D needs ten month-end closes, at most 230 sessions,
+# plus ATR(20). 260 covers both with a margin.
+warmup_sessions: 260
+splits:
+  # development_start 2017-02-01, not the dataset's first day (2016-01-01). It is the first month
+  # boundary with the full 260-session warm-up inside the dataset: there are 272 XNYS sessions
+  # from 2016-01-04 to 2017-01-31, and the 260th session before 2017-02-01 is 2016-01-21.
+  # Starting on 2016-01-01 would leave the first windows cold: Candidate C would be flat until
+  # mid-October 2016 and Candidate D until the end of October 2016. Starting on 2017-01-01 would
+  # give only 252 warm-up sessions. 2017-02..2026-08 is also 114 months, an exact multiple of the
+  # 3-month step, so every deployment window is a full quarter ending at the holdout start.
+  # Chosen from the calendar and the rules' lookbacks only, before any data was downloaded.
+  development_start: "2017-02-01T00:00:00Z"
+  holdout_start: "2026-08-01T00:00:00Z"
+  holdout_end: "2026-11-01T00:00:00Z"   # = the dataset's request end
+  walk_forward: {train_months: 12, validation_months: 3, test_months: 3, step_months: 3}
+  # Embargo 0, derived from the holding horizons. Every three-month window is an independent
+  # deployment that closes all positions at its last session's close (ADR-0020, END_OF_DATA).
+  # So the realised holding horizon of every trade is capped by its window, and no validation
+  # outcome can use a bar at or after the validation end. The trades-exiting-inside purge is
+  # therefore exact without an embargo. The nominal maximum holds cannot serve as the embargo:
+  # Candidate C's 10 sessions (up to 18 calendar days) would purge every Candidate D trade
+  # still open in the last weeks of a validation window, which is nearly all of them, biasing
+  # selection against D; Candidate D's 260 sessions are longer than a validation window.
+  embargo_minutes: 0
+operating_costs_usd_per_month: "0.00"  # local compute; free Alpaca historical SIP data (end >= 15 min old)
+# As the stock baseline (stocks_baseline_v1), unchanged.
+diagnostic_capitals: ["1000"]  # capital views: diagnostic only, never G2 or selection
+bootstrap:
+  replicates: 2000
+  mean_block_sessions: "5"
+  seed: 20261107
+universe_selection: >-
+  Fixed on 2026-11-09 by the shared daily-bar design before any ETF data was downloaded or
+  inspected. The 16 funds are SPY, QQQ, IWM, DIA, the nine original Select Sector SPDRs (XLB, XLE,
+  XLF, XLI, XLK, XLP, XLU, XLV, XLY), TLT, IEF and GLD: large, liquid, unleveraged US-listed funds
+  that traded throughout 2016-2026. This is today's list applied to past history, not a
+  point-in-time universe. Survivorship bias among broad index and sector funds is small but not
+  zero: the list was chosen knowing these funds survived and stayed liquid. The sector line-up
+  also changed. XLRE (2015) and XLC (2018) are excluded, and the September 2018 sector
+  reclassification moved large companies from XLK and XLY into the new XLC, so a sector fund
+  is not a constant basket. T-0013 trades the 13 equity ETFs, as Connors and Alvarez tested
+  equities and equity ETFs; T-0014 trades all 16, Faber's multi-asset idea. The funds overlap
+  heavily: SPY, QQQ, IWM and DIA hold largely the same large-cap stocks, and the sector funds
+  partition the S&P 500. Sixteen funds are therefore far fewer independent bets. Exposure tags
+  (ADR-0015) cap SPY, QQQ, IWM and DIA together at the 20% symbol cap (US_EQUITY_INDEX); TLT and
+  IEF share US_TREASURY; GLD is GOLD; sector funds are untagged. US ETFs are research-only: the
+  STOCKS profile admits ordinary shares only, and whether the owner's account may buy US ETFs
+  (product-document rules for European retail investors, markets_and_brokers.md section 7) is
+  unconfirmed.
+horizon: >-
+  Daily bars, one per XNYS regular session (Alpaca SIP, raw prices), with multi-day holds
+  carried overnight. T-0013 decides on every completed session's close and holds until the first
+  close above SMA(5), which sells at the next open, for at most 10 sessions, with a 3 x ATR(10)
+  disaster stop. T-0014 decides only on a month-end session's completed close and holds while
+  the month-end close stays above its 10-month average, for at most 260 sessions, with a
+  4 x ATR(20) disaster stop and a 3R target. Each three-month window is an independent
+  deployment from USD 50 (ADR-0020): a position still open at a window end is closed at the last
+  close's estimated bid (END_OF_DATA). T-0014's holds of several months are therefore cut at
+  least every quarter, and its 260-session time exit can bind only in the continuous deployment.
+  For the same reason the walk-forward embargo is 0: no trade outlives its window, so no
+  validation result can depend on a bar of the following test window.
+  260 exchange sessions of feature-only bars precede every window. Loss windows: NY session and
+  NY week, plus UTC day and UTC week. Statistics use NYSE sessions, 252 per year.
+entry_exit_timing: >-
+  Decision at a completed daily bar (session close + 1 s). The order is a next-open marketable
+  buy limit: the estimated ask at the signal close plus the rule's frozen offset (T-0013 5 bps,
+  T-0014 100 bps). It fills only at the next session's opening price plus the assumed half-spread
+  and slippage, and only if that price is within the limit. Otherwise the entry is missed: there
+  is no later fill that day, and a missing bar at that open is also a missed entry.
+  The published rules trade at the close: Connors and Alvarez buy and sell on the close, and
+  Faber trades the month-end close. Here every order is placed after the close and fills at the
+  next open, so overnight gaps are borne. T-0013's 5 bps offset acts as a no-gap-up filter that
+  the book does not have: an open more than about 3 bps above the signal close misses the entry.
+  T-0014's 1% collar admits ordinary opening gaps.
+  Exits. Exit signals (T-0013: a close above SMA(5); T-0014: a month-end close below its 10-month
+  average) and time exits sell at the next open. Disaster stops rest for the whole hold; they are
+  not in the published rules, but the policy needs one to size a trade. Inside a bar the stop is
+  checked before the target, and an open through the stop sells at that open (STOP_GAP);
+  overnight gaps can exceed the 10 bps gap allowance. T-0013's target (SMA(5) at the signal) is
+  only a cost-coverage gate, never an exit. T-0014's 3R target is a resting exit.
+  Policy. One pending entry at a time, at most 2 new entries per session and at most 2 open
+  positions. When several ETFs signal at the same close, the first in instrument-id order is
+  taken. This is not the equal-weight portfolios of the publications.
+  Data. Alpaca SIP consolidated daily bars at raw prices. Open, high, low and close are
+  regular-hours prices; the open is the first qualifying trade, not necessarily the opening
+  auction. Volume and VWAP include 04:00-20:00 New York trades and are used only for the
+  participation cap. Distributions are neither credited nor adjusted, so ex-dividend drops count
+  as losses and enter RSI, SMA and ATR. This understates total return most for TLT and IEF, which
+  pay monthly. The SIP feed also differs from the IEX single-venue bars of the stock baseline and
+  the paper runtime.
+  Costs. Alpaca charges no commission on US-listed stocks and ETFs. SEC Section 31, FINRA TAF and
+  CAT are assumed to apply to ETF trades as to shares, and the 2022-2026 maximum rates of
+  configs/fees/alpaca_us_equities_v2.yaml are assumed to bound 2017-2021. Both assumptions are
+  to be confirmed with dated sources before registration. Fractional day orders follow the
+  stock route; their acceptance at the open is unverified until the paper certification run.
+trials:
+  - trial_id: T-0013
+    spec_file: src/trader/strategies/specs/candidate_c_etf_daily_v1.yaml
+    instruments: [ARCX:SPY, XNAS:QQQ, ARCX:IWM, ARCX:DIA, ARCX:XLB, ARCX:XLE, ARCX:XLF, ARCX:XLI,
+                  ARCX:XLK, ARCX:XLP, ARCX:XLU, ARCX:XLV, ARCX:XLY]
+    hypothesis: >-
+      On the 13 US equity ETFs, a completed daily close above its 200-session simple moving
+      average with a 2-period Wilder RSI below 10 (Connors and Alvarez 2008) is followed by a
+      rebound large enough that buying at the next open and selling at the open after the first
+      close above the 5-session average has positive net expectancy after Alpaca's pass-through
+      fees, the assumed spread and slippage, at USD 50 under the shared policy. The hold is at
+      most 10 sessions, with a 3 x ATR(10) disaster stop.
+  - trial_id: T-0014
+    spec_file: src/trader/strategies/specs/candidate_d_etf_monthly_v1.yaml
+    hypothesis: >-
+      Across the 16 ETFs, holding a fund from the open after a month-end close above the average
+      of its last 10 month-end closes until the open after a month-end close below it (Faber
+      2007) earns positive net expectancy after Alpaca's pass-through fees, the assumed spread
+      and slippage, measured in independent three-month deployments from USD 50 under the shared
+      policy. The rule adds a 4 x ATR(20) disaster stop, a 3R target and a 260-session limit.

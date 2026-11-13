@@ -1,0 +1,3 @@
+# esbuild (used by Vite and tsx) needs its install script to place its platform binary.
+allowBuilds:
+  esbuild: true

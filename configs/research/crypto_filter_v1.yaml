@@ -1,0 +1,67 @@
+# Crypto candidate-filter study (implementation_roadmap.md M3; strategy_and_profitability.md
+# sections 6-7; docs/ml_research_guide.md section 5). A model may only VETO candidates that a
+# frozen rule proposed; it never sizes, prices or times an order.
+# Data, universe, instrument specs, fees (Kraken Pro Tier 1), fills, policy, split plan and
+# bootstrap settings come from the base study and are bound into each registration unchanged.
+# Everything below is fixed BEFORE any trial runs. Budget: exactly two trials.
+kind: model_study
+study_id: crypto_filter_v1
+title: Crypto candidate filters - logistic vetoes on Candidates A and B (BTC/USD, ETH/USD, 15m)
+description: >-
+  Per walk-forward fold, a regularised logistic model of the candidate-v1 features estimates the
+  probability that a frozen rule's candidate is profitable after all costs (each candidate
+  simulated alone from a USD 50 ledger) and vetoes candidates below a threshold chosen on the
+  validation window. Each test window compares the rule alone, the rule with the filter, random
+  rejection at the filter's realised veto rate and equal accepted-candidate counts, in the same
+  USD 50 engine with the same costs. The base study found no gross edge in either rule
+  (research/reports/baseline_report.md); this study tests whether a filter can select a
+  profitable subset, and a negative result is a documented rejection.
+base_study: configs/research/crypto_baseline_v1.yaml
+trials:
+  - trial_id: T-0011
+    family: CANDIDATE_A
+    spec_file: src/trader/strategies/specs/candidate_a_crypto_v1.yaml
+    overrides: {}  # spec defaults: 1.5 x ATR(14) stop, 2.0R target, six-hour time exit
+    model_type: logistic
+    grid:
+      - {C: "0.1", class_weight: none}
+      - {C: "0.1", class_weight: balanced}
+      - {C: "1.0", class_weight: none}
+      - {C: "1.0", class_weight: balanced}
+    calibration: platt
+    # P(net > 0) thresholds: a 2R target breaks even near p = 0.33 before costs, so the grid
+    # starts at 0.30; the threshold is still chosen on each fold's validation window only.
+    threshold_grid: ["0.30", "0.35", "0.40", "0.45", "0.50", "0.55", "0.60", "0.65", "0.70"]
+    min_accepts: 20
+    controls: {random_seeds: 20, turnover_matched: true}
+    seed: 20261108
+    hypothesis: >-
+      Among Candidate A trend-continuation candidates on BTC/USD and ETH/USD 15-minute bars
+      (spec defaults: 1.5 x ATR(14) stop, 2.0R target, six-hour time exit), a regularised
+      logistic model of the candidate-v1 features trained per walk-forward fold selects a subset
+      whose test-window net PnL after Kraken Tier 1 taker fees, spread and slippage exceeds the
+      unfiltered rule, random rejection at the same veto rate and equal accepted-candidate counts.
+  - trial_id: T-0012
+    family: CANDIDATE_B
+    spec_file: src/trader/strategies/specs/candidate_b_crypto_v1.yaml
+    overrides: {}  # spec defaults: 2 ATR entry deviation, 1.5 x ATR stop, target = reference
+    model_type: logistic
+    grid:
+      - {C: "0.1", class_weight: none}
+      - {C: "0.1", class_weight: balanced}
+      - {C: "1.0", class_weight: none}
+      - {C: "1.0", class_weight: balanced}
+    calibration: platt
+    # P(net > 0) thresholds: a 2R target breaks even near p = 0.33 before costs, so the grid
+    # starts at 0.30; the threshold is still chosen on each fold's validation window only.
+    threshold_grid: ["0.30", "0.35", "0.40", "0.45", "0.50", "0.55", "0.60", "0.65", "0.70"]
+    min_accepts: 20
+    controls: {random_seeds: 20, turnover_matched: true}
+    seed: 20261108
+    hypothesis: >-
+      Among Candidate B mean-reversion candidates on BTC/USD and ETH/USD 15-minute bars (spec
+      defaults: entry at least 2 ATR(14) below the 24-hour volume-weighted reference in a quiet
+      regime, 1.5 x ATR stop, six-hour time exit), a regularised logistic model of the
+      candidate-v1 features trained per walk-forward fold selects a subset whose test-window net
+      PnL after Kraken Tier 1 taker fees, spread and slippage exceeds the unfiltered rule, random
+      rejection at the same veto rate and equal accepted-candidate counts.

@@ -1,0 +1,95 @@
+.wrap {
+  position: relative;
+  width: 100%;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+
+.axis {
+  font-size: 11px;
+  fill: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+.label {
+  font-size: 12px;
+  fill: var(--ink-2);
+}
+
+.value {
+  font-size: 12px;
+  fill: var(--ink);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.grid {
+  stroke: var(--chart-grid);
+  stroke-width: 1;
+}
+
+.base {
+  stroke: var(--chart-axis);
+  stroke-width: 1;
+}
+
+.hit {
+  fill: transparent;
+  cursor: default;
+}
+
+.hit:hover + .mark,
+.row:hover .mark {
+  opacity: 0.85;
+}
+
+.tip {
+  position: absolute;
+  pointer-events: none;
+  background: var(--ink);
+  color: var(--surface);
+  font-size: 12px;
+  line-height: 1.35;
+  padding: 6px 9px;
+  border-radius: 8px;
+  white-space: nowrap;
+  transform: translate(-50%, calc(-100% - 10px));
+  z-index: 5;
+  font-variant-numeric: tabular-nums;
+  box-shadow: var(--shadow-float);
+}
+
+.tipMuted {
+  opacity: 0.7;
+}
+
+.toggle {
+  position: absolute;
+  top: -40px;
+  right: 0;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 12px;
+  color: var(--ink-2);
+  margin-bottom: 10px;
+}
+
+.key {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}

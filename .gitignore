@@ -1,0 +1,58 @@
+# Python / tooling (caches are configured to live under .cache/; the old names stay ignored
+# for branches that predate that)
+.venv/
+.cache/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+*.egg-info/
+/build/
+/dist/
+
+# Runtime state and outputs (never commit)
+/runs/
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Market data, account exports, broker responses with personal information.
+# Anchored to the repository root: the source package src/trader/data/ must stay tracked.
+/data/
+research/raw/
+research/cache/
+*.parquet
+/exports/
+
+# Secrets
+.env
+.env.*
+!.env.example
+/secrets/
+*.pem
+*.key
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Sunshine Desk notes and sheet (ui/server/desk): local, never committed
+/.desk/
+
+# More places a secret or a private dump could land
+*.env
+*.p12
+*.pfx
+id_rsa*
+/keys/
+*.log
+*.dump
+
+# Claude Code local state (the shared settings.json stays tracked)
+/.claude/settings.local.json
+/.claude/worktrees/
